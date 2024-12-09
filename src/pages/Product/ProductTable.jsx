@@ -84,16 +84,22 @@ function ProductTable() {
       render: (_, record) => (
         <Space size={"large"}>
           <Tooltip title="Edit" trigger={["hover"]}>
-            <EditTwoTone style={{ fontSize: '20px', }} onClick={() => console.log(record)} />
+            <EditTwoTone
+              style={{ fontSize: "20px" }}
+              onClick={() => onOpenUpdateModal(record)}
+            />
           </Tooltip>
           <Tooltip title="Delete" trigger={["hover"]}>
             <Popconfirm
-              title="Bạn có chắc chắn muốn xóa không?"
-              onConfirm={() => console.log(record)}
-              okText="Có"
-              cancelText="Không"
+              title={`Do you want to delete product ${record.title}?`}
+              onConfirm={() => handleDeleteProduct(record.id)}
+              okText="Delete"
+              cancelText="Cancel"
             >
-              <DeleteTwoTone style={{ fontSize: '20px', }} twoToneColor="ff4d4f"/>
+              <DeleteTwoTone
+                style={{ fontSize: "20px" }}
+                twoToneColor="ff4d4f"
+              />
             </Popconfirm>
           </Tooltip>
           <Tooltip
@@ -101,9 +107,17 @@ function ProductTable() {
             trigger={["hover"]}
           >
             {record.status == "active" ? (
-              <LockTwoTone style={{ fontSize: '20px', }} onClick={() => console.log(record)} twoToneColor="#f5222d"/>
+              <LockTwoTone
+                style={{ fontSize: "20px" }}
+                onClick={() => console.log(record)}
+                twoToneColor="#f5222d"
+              />
             ) : (
-              <UnlockTwoTone style={{ fontSize: '20px', }} onClick={() => console.log(record)} twoToneColor="#52c41a"/>
+              <UnlockTwoTone
+                style={{ fontSize: "20px" }}
+                onClick={() => console.log(record)}
+                twoToneColor="#52c41a"
+              />
             )}
           </Tooltip>
         </Space>
@@ -114,26 +128,20 @@ function ProductTable() {
   const onOpenCreateModal = () => {
     setOpenCreateModal(!openCreateModal);
   };
-  const onOpenUpdateModal = async (id) => {
-    setProductId(id);
+  const onOpenUpdateModal = async (record) => {
     if (openUpdateModal) {
       setOpenUpdateModal(!openUpdateModal);
     } else {
-      try {
-        const res = await ProductService.getProduct(id);
-        console.log(res.data);
-        setDataDetail(res.data);
-        setOpenUpdateModal(!openUpdateModal);
-      } catch (error) {}
+      setDataDetail(record);
+      setOpenUpdateModal(!openUpdateModal);
     }
   };
 
-  const handleCreateProduct = async (data, reset) => {
+  const handleCreateProduct = async (data) => {
     try {
       console.log(data.image);
       await ProductService.createProduct(data);
       setOpenCreateModal(false);
-      reset();
       productListFetch();
     } catch (error) {}
   };
@@ -166,22 +174,10 @@ function ProductTable() {
         onCreate={handleUpdateProduct}
         dataDetail={dataDetail}
       />
-      {/* <Breadcrumb pageName="Products" /> */}
-      <Button
-        className="inline-flex items-center justify-center gap-2.5 rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10 mb-2"
-        onClick={onOpenCreateModal}
-      >
-        Add new product
-      </Button>
+
+      <Button style={{marginBottom: "2rem"}} onClick={onOpenCreateModal}>Add new product</Button>
 
       <div className="flex flex-col gap-10">
-        {/* <TableThree
-          data={productList}
-          headers={headers}
-          title="Product table"
-          handleUpdateProduct={onOpenUpdateModal}
-          handleDeleteProduct={handleDeleteProduct}
-        /> */}
         <Table dataSource={productList} columns={columns} />
       </div>
     </div>
