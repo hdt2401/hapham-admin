@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-// import ModalDefault from '../../../components/Modal/ModalDefault';
-// import { PhotoIcon } from '@heroicons/react/24/outline';
 import { useForm } from "react-hook-form";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebase/firebaseConfig.js";
@@ -33,6 +31,7 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
 
   const propsUpload = {
     maxCount: 1,
+    name: "image",
     listType: "picture",
     accept: "image/*",
     beforeUpload: () => {
@@ -47,12 +46,10 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
     },
     onChange: ({ fileList: newFile }) => {
       setFile(newFile.length == 0 ? null : newFile);
-      console.log(newFile);
     },
   };
 
   const handleSubmit = async (data) => {
-    console.log(file[0].originFileObj)
     const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file[0].originFileObj);
     setLoading(true);
@@ -61,6 +58,7 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
       (error) => {
         console.error("Upload error: ", error);
       },
+      (snapshot) => {},
       async () => {
         // Complete function
         let downloadURL;
@@ -72,7 +70,7 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
           onCreate({ ...data, image: downloadURL, status: "active" });
         }
       }
-    )
+    );
   };
 
   return (
@@ -84,7 +82,7 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
         okButtonProps={{
           autoFocus: true,
           htmlType: "submit",
-          loading: loading
+          loading: loading,
         }}
         destroyOnClose
         okText="Submit"
@@ -147,7 +145,7 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
           <TextArea />
         </Form.Item>
         <Form.Item label="Image" name="image">
-          <Upload name="image" {...propsUpload}>
+          <Upload {...propsUpload}>
             <Button>
               <PlusOutlined />
               Upload

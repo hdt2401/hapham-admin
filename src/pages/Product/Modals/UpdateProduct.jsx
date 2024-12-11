@@ -1,104 +1,221 @@
-import { Form, Input, Modal, Upload } from "antd";
+import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import React, { useEffect, useState } from "react";
-// import ModalDefault from '../../../components/Modal/ModalDefault';
-// import { PhotoIcon } from '@heroicons/react/24/outline';
+import { PlusOutlined } from "@ant-design/icons";
+import TextArea from "antd/es/input/TextArea";
+import { storage } from "../../../firebase/firebaseConfig";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-import { InboxOutlined } from "@ant-design/icons";
-import { useForm } from "react-hook-form";
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 export default function UpdateProduct({
   isOpen,
   handleOpenModal,
-  onCreate,
+  onUpdate,
   dataDetail,
 }) {
-  const [base64String, setBase64String] = useState("");
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    getValues,
-    formState: { errors },
-  } = useForm();
-  
-  const normFile = (e) => {
-    console.log("Upload event:", e);
-    if (Array.isArray(e)) {
-      return e;
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [checkImage, setCheckImage] = useState(false);
+  useEffect(() => {
+    setFile([
+      {
+        uid: dataDetail?.id,
+        name: decodeURIComponent(dataDetail?.image)
+          .substring(decodeURIComponent(dataDetail?.image).lastIndexOf("/") + 1)
+          .split("?")[0],
+        status: "done",
+        url: dataDetail?.image,
+      },
+    ]);
+  }, [dataDetail, isOpen]);
+
+  useEffect(() => {
+    form.validateFields(["image"]);
+  }, [checkImage, form]);
+
+  const propsUpload = {
+    maxCount: 1,
+    listType: "picture",
+    accept: "image/*",
+    beforeUpload: () => {
+      return false;
+    },
+    onPreview: async (file) => {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj);
+      }
+      setPreviewImage(file.url || file.preview);
+      setPreviewOpen(true);
+    },
+    onChange: ({ fileList: newFile }) => {
+      setFile(newFile.length == 0 ? null : newFile);
+      setCheckImage(!checkImage);
+    },
+  };
+
+  const handleSubmit = async (data) => {
+    setLoading(true);
+    if (file?.length > 0 && file[0].originFileObj) {
+      const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
+      const uploadTask = uploadBytesResumable(
+        storageRef,
+        file[0].originFileObj
+      );
+      let downloadURL;
+      uploadTask.on(
+        "state_changed",
+        (error) => {
+          console.error("Upload error: ", error);
+        },
+        (snapshot) => {},
+        async () => {
+          try {
+            downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          } catch (error) {
+          }
+        }
+      );
+      await onUpdate(dataDetail.id, { ...data, image: downloadURL });
+    } else {
+      await onUpdate(dataDetail.id, data);
     }
-    return e?.file;
-  };
-
-  const convertToBase64 = (file) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setBase64String(reader.result);
-    };
-    reader.readAsDataURL(file); // Chuyển đổi tệp thành Base64
-  };
-
-  const handleChangeImage = (event) => {
-    const file = event.target.files[0];
-    convertToBase64(file);
-  };
-
-  const onSubmit = async (data) => {
-    const dataToSend = { ...data, image: base64String };
-    onCreate(dataToSend, reset);
+    setLoading(false);
   };
 
   return (
     <>
       <Modal
-        title="Edit product"
+        title="Update product"
         open={isOpen}
         onCancel={handleOpenModal}
-        onOk={() => handleSubmit()}
+        okButtonProps={{
+          autoFocus: true,
+          htmlType: "submit",
+          loading: loading,
+        }}
+        destroyOnClose
+        okText="Submit"
+        cancelText="Cancel"
+        modalRender={(dom) => (
+          <Form
+            form={form}
+            name="updateProductForm"
+            initialValues={dataDetail}
+            onFinish={handleSubmit}
+            clearOnDestroy
+            labelCol={{
+              span: 6,
+            }}
+            wrapperCol={{
+              span: 18,
+            }}
+          >
+            {dom}
+          </Form>
+        )}
       >
-        <Form initialValues={dataDetail}>
-          <Form.Item
-            label="Title"
-            name="title"
-            rules={[
+        <Form.Item
+          label="Title"
+          name="title"
+          rules={[
+            {
+              required: true,
+              message: "Title is required!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item label="Sub-Title" name="subTitle">
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Price"
+          name="price"
+          rules={[
+            {
+              required: true,
+              message: "Price is required!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item name="status" label="Status">
+          <Select
+            options={[
               {
-                required: true,
-                message: "Title is required!",
+                value: "active",
+                label: "Active",
+              },
+              {
+                value: "inactive",
+                label: "Inactive",
               },
             ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item label="Sub-Title" name="subTitle">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Price" name="price">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Description" name="description">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Image">
-            <Form.Item
-              name="image"
-              valuePropName="file"
-              getValueFromEvent={normFile}
-              noStyle
-            >
-              <Upload.Dragger name="image" action="/upload.do">
-                <p className="ant-upload-drag-icon">
-                  <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag file to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Support for a single or bulk upload.
-                </p>
-              </Upload.Dragger>
-            </Form.Item>
-          </Form.Item>
-        </Form>
+          />
+        </Form.Item>
+        <Form.Item
+          label="Description"
+          name="description"
+          rules={[
+            {
+              required: true,
+              message: "Description is required!",
+            },
+          ]}
+        >
+          <TextArea />
+        </Form.Item>
+        <Form.Item
+          label="Image"
+          name="image"
+          valuePropName="fileList" // Synchronize fileList with form
+          getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)} // Ensure proper file handling
+          rules={[
+            {
+              required: true,
+              message: "Please upload an image!",
+            },
+            () => ({
+              validator(_, value) {
+                if (file && file.length > 0) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("You must upload an image!"));
+              },
+            }),
+          ]}
+        >
+          <Upload {...propsUpload} fileList={file}>
+            <Button>
+              <PlusOutlined />
+              Upload
+            </Button>
+          </Upload>
+          {previewImage && (
+            <Image
+              wrapperStyle={{
+                display: "none",
+              }}
+              preview={{
+                visible: previewOpen,
+                onVisibleChange: (visible) => setPreviewOpen(visible),
+                afterOpenChange: (visible) => !visible && setPreviewImage(""),
+              }}
+              src={previewImage}
+            />
+          )}
+        </Form.Item>
       </Modal>
     </>
   );

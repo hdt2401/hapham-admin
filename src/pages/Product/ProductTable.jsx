@@ -15,7 +15,6 @@ function ProductTable() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [dataDetail, setDataDetail] = useState();
-  const [productId, setProductId] = useState();
   useEffect(() => {
     productListFetch();
   }, []);
@@ -23,7 +22,6 @@ function ProductTable() {
   const productListFetch = async () => {
     try {
       const res = await ProductService.getProductList();
-      console.log(res);
       if (res) {
         const list = [...res.data.data].map((e) => {
           return {
@@ -38,9 +36,7 @@ function ProductTable() {
         });
         setProductList(list);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const columns = [
@@ -102,7 +98,7 @@ function ProductTable() {
               />
             </Popconfirm>
           </Tooltip>
-          <Tooltip
+          {/* <Tooltip
             title={record.status == "active" ? "Inactive" : "Active"}
             trigger={["hover"]}
           >
@@ -119,7 +115,7 @@ function ProductTable() {
                 twoToneColor="#52c41a"
               />
             )}
-          </Tooltip>
+          </Tooltip> */}
         </Space>
       ),
     },
@@ -139,16 +135,15 @@ function ProductTable() {
 
   const handleCreateProduct = async (data) => {
     try {
-      console.log(data.image);
       await ProductService.createProduct(data);
       setOpenCreateModal(false);
       productListFetch();
     } catch (error) {}
   };
 
-  const handleUpdateProduct = async (data) => {
+  const handleUpdateProduct = async (id, data) => {
     try {
-      await ProductService.updateProduct(productId, data);
+      await ProductService.updateProduct(id, data);
       setOpenUpdateModal(false);
       productListFetch();
     } catch (error) {}
@@ -171,11 +166,13 @@ function ProductTable() {
       <UpdateProduct
         isOpen={openUpdateModal}
         handleOpenModal={onOpenUpdateModal}
-        onCreate={handleUpdateProduct}
+        onUpdate={handleUpdateProduct}
         dataDetail={dataDetail}
       />
 
-      <Button style={{marginBottom: "2rem"}} onClick={onOpenCreateModal}>Add new product</Button>
+      <Button style={{ marginBottom: "2rem" }} onClick={onOpenCreateModal}>
+        Add new product
+      </Button>
 
       <div className="flex flex-col gap-10">
         <Table dataSource={productList} columns={columns} />
