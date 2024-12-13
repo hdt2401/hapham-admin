@@ -1,8 +1,9 @@
 import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import TextArea from "antd/es/input/TextArea";
 import { storage } from "../../../../firebase/firebaseConfig";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -62,8 +63,8 @@ export default function UpdateCertificate({
   };
 
   const handleSubmit = async (data) => {
+    setLoading(true);
     if (file?.length > 0 && file[0].originFileObj) {
-      setLoading(true);
       const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
       const uploadTask = uploadBytesResumable(
         storageRef,
@@ -87,7 +88,6 @@ export default function UpdateCertificate({
         }
       );
     } else {
-      setLoading(true);
       await onUpdate(dataDetail.id, data);
       setLoading(false);
     }
@@ -126,8 +126,8 @@ export default function UpdateCertificate({
         )}
       >
         <Form.Item
-          label="Title"
-          name="title"
+          label="Fullname"
+          name="fullName"
           rules={[
             {
               required: true,
@@ -137,10 +137,13 @@ export default function UpdateCertificate({
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Date" name="date">
+        <Form.Item label="Scholarship" name="scholarship">
           <Input />
         </Form.Item>
-        <Form.Item label="Status" name="status">
+        <Form.Item label="position" name="position">
+          <Input />
+        </Form.Item>
+        <Form.Item name="status" label="Status">
           <Select
             options={[
               {

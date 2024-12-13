@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CertificateService from "../../../services/about.ts";
+import CertificateService from "../../../services/about/certificate.ts";
 import CreateCertificate from "./Modals/CreateCertificate.jsx";
 import UpdateCertificate from "./Modals/UpdateCertificate.jsx";
 import { Button, Table, Image, Tag, Popconfirm, Tooltip, Space } from "antd";
@@ -17,7 +17,7 @@ function CertificateTable() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const { startLoading, stopLoading } = useLoading();
-  const {openToast} = useToast();
+  const { openToast } = useToast();
   const [dataDetail, setDataDetail] = useState();
 
   useEffect(() => {
@@ -33,10 +33,8 @@ function CertificateTable() {
           return {
             id: e._id,
             title: e.title,
-            subTitle: e.subTitle,
-            description: e.description,
+            date: e.date,
             image: e.image,
-            price: e.price,
             status: e.status,
           };
         });
@@ -59,12 +57,12 @@ function CertificateTable() {
       dataIndex: "image",
       key: "image",
       width: 240,
-      render: (src) => <Image src={src} alt="image" width={200} lazyload/>,
+      render: (src) => <Image src={src} alt="image" width={200} />,
     },
     {
       title: "Date",
       dataIndex: "date",
-      key: "price",
+      key: "date",
     },
     {
       title: "Status",
@@ -141,13 +139,13 @@ function CertificateTable() {
     try {
       const result = await CertificateService.createCertificate(data);
       setOpenCreateModal(false);
-      if(result) {
-        openToast('success', "Thành công");
+      if (result) {
+        openToast("success", "Thành công");
       }
       console.log(result);
       certificateListFetch();
     } catch (error) {
-      openToast('error', error);
+      openToast("error", error);
     }
   };
 
@@ -155,12 +153,12 @@ function CertificateTable() {
     try {
       const result = await CertificateService.updateCertificate(id, data);
       setOpenUpdateModal(false);
-      if(result) {
-        openToast('success', "Thành công");
+      if (result) {
+        openToast("success", "Thành công");
       }
       certificateListFetch();
     } catch (error) {
-      openToast('error', error);
+      openToast("error", error);
     }
   };
 
@@ -169,7 +167,7 @@ function CertificateTable() {
       await CertificateService.deleteCertificate(id);
       certificateListFetch();
     } catch (error) {
-      openToast('error', error);
+      openToast("error", error);
     }
   };
 

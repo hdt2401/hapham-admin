@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase/firebaseConfig";
 import { Button, Form, Image, Input, Modal, Upload } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { InboxOutlined, UploadOutlined, PlusOutlined } from "@ant-design/icons";
+import TextArea from "antd/es/input/TextArea.js";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -14,8 +15,9 @@ const getBase64 = (file) =>
 
 export default function CreateCertificate({ isOpen, handleOpenModal, onCreate }) {
   const defaultValues = {
-    title: "",
-    date: "",
+    fullname: "",
+    position: "",
+    scholarship: "",
     image: null,
   };
   const [form] = Form.useForm();
@@ -101,8 +103,8 @@ export default function CreateCertificate({ isOpen, handleOpenModal, onCreate })
         )}
       >
         <Form.Item
-          label="Title"
-          name="title"
+          label="Fullname"
+          name="fullName"
           rules={[
             {
               required: true,
@@ -112,7 +114,10 @@ export default function CreateCertificate({ isOpen, handleOpenModal, onCreate })
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Date" name="date">
+        <Form.Item label="Position" name="position">
+          <Input />
+        </Form.Item>
+        <Form.Item label="Scholarship" name="scholarship">
           <Input />
         </Form.Item>
         <Form.Item label="Image" name="image">

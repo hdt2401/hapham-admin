@@ -16,6 +16,7 @@ const updateCertificate = async (id:string, data: object) => {
 const deleteCertificate = async (id:string) => {
   return await axios.delete(API_URL + "certificate/" + id);
 };
+
 const CertificateService = {
   createCertificate,
   getCertificateList,
@@ -23,4 +24,5 @@ const CertificateService = {
   updateCertificate,
   deleteCertificate
 };
+
 export default CertificateService;
