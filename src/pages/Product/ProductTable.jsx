@@ -9,11 +9,15 @@ import {
   LockTwoTone,
   UnlockTwoTone,
 } from "@ant-design/icons";
+import { useLoading } from "../../components/Loading/index.jsx";
+import { useToast } from "../../components/Toast/index.jsx";
 
 function ProductTable() {
   const [productList, setProductList] = useState([]);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const { startLoading, stopLoading } = useLoading();
+  const {openToast} = useToast();
   const [dataDetail, setDataDetail] = useState();
   useEffect(() => {
     productListFetch();
@@ -21,6 +25,7 @@ function ProductTable() {
 
   const productListFetch = async () => {
     try {
+      startLoading();
       const res = await ProductService.getProductList();
       if (res) {
         const list = [...res.data.data].map((e) => {
@@ -36,7 +41,10 @@ function ProductTable() {
         });
         setProductList(list);
       }
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      stopLoading();
+    }
   };
 
   const columns = [
@@ -135,25 +143,39 @@ function ProductTable() {
 
   const handleCreateProduct = async (data) => {
     try {
-      await ProductService.createProduct(data);
+      const result = await ProductService.createProduct(data);
       setOpenCreateModal(false);
+      if(result) {
+        openToast('success', "Thành công");
+      }
+      console.log(result);
       productListFetch();
-    } catch (error) {}
+    } catch (error) {
+      openToast('error', error);
+    }
   };
 
   const handleUpdateProduct = async (id, data) => {
     try {
-      await ProductService.updateProduct(id, data);
+      const result = await ProductService.updateProduct(id, data);
       setOpenUpdateModal(false);
+      if(result) {
+        openToast('success', "Thành công");
+      }
+      console.log(result);
       productListFetch();
-    } catch (error) {}
+    } catch (error) {
+      openToast('error', error);
+    }
   };
 
   const handleDeleteProduct = async (id) => {
     try {
       await ProductService.deleteProduct(id);
       productListFetch();
-    } catch (error) {}
+    } catch (error) {
+      openToast('error', error);
+    }
   };
 
   return (

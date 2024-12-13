@@ -3,12 +3,18 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter  } from "react-router";
+import { BrowserRouter } from "react-router";
+import { LoadingProvider } from "./components/Loading";
+import { ToastProvider } from "./components/Toast";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
-    <App />
+    <ToastProvider>
+      <LoadingProvider>
+        <App />
+      </LoadingProvider>
+    </ToastProvider>
   </BrowserRouter>
 );
 

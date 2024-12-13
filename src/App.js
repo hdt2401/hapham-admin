@@ -123,7 +123,7 @@ const App = () => {
           justifyContent: "space-between",
           padding: "0 16px",
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-          zIndex: "99999"
+          zIndex: "999"
         }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
