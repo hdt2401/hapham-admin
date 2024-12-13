@@ -53,12 +53,19 @@ function ProductTable() {
       dataIndex: "title",
       key: "title",
     },
+    
+    {
+      title: "Sub-Title",
+      dataIndex: "subTitle",
+      key: "subTitle",
+    },
+
     {
       title: "Image",
       dataIndex: "image",
       key: "image",
       width: 240,
-      render: (src) => <Image src={src} alt="image" width={200} />,
+      render: (src) => <Image src={src} alt="image" width={200} lazyload/>,
     },
     {
       title: "Price",
@@ -162,7 +169,6 @@ function ProductTable() {
       if(result) {
         openToast('success', "Thành công");
       }
-      console.log(result);
       productListFetch();
     } catch (error) {
       openToast('error', error);
