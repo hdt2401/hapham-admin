@@ -80,15 +80,17 @@ export default function UpdateProduct({
         async () => {
           try {
             downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            await onUpdate(dataDetail.id, { ...data, image: downloadURL });
           } catch (error) {
+          } finally {
+            setLoading(false);
           }
         }
       );
-      await onUpdate(dataDetail.id, { ...data, image: downloadURL });
     } else {
       await onUpdate(dataDetail.id, data);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

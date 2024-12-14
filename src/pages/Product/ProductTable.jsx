@@ -65,7 +65,7 @@ function ProductTable() {
       dataIndex: "image",
       key: "image",
       width: 240,
-      render: (src) => <Image src={src} alt="image" width={200} lazyload/>,
+      render: (src) => <Image src={src} alt="image" width={200}/>,
     },
     {
       title: "Price",
