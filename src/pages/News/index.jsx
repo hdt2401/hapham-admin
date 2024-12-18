@@ -15,6 +15,9 @@ import MenuBar from "./MenuBar";
 import ImageModal from "./Modals/ImageModal";
 import ImageResize from "tiptap-extension-resize-image";
 import { useTitle } from "../../components/Title";
+import { useLoading } from "../../components/Loading";
+import { useToast } from "../../components/Toast";
+import PostService from "../../services/post.ts";
 
 const extensions = [
   Underline,
@@ -46,10 +49,13 @@ const extensions = [
 export default function News() {
   useTitle("News");
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const editor = useEditor({
     extensions: extensions,
     content: null,
   });
+  const {startLoading, stopLoading} = useLoading();
+  const {openToast} = useToast();
 
   const setImage = useCallback((image) => {
     if (image) {
@@ -64,14 +70,35 @@ export default function News() {
   if (!editor) {
     return null;
   }
+
   const handleSubmit = () => {
     console.log(editor.getHTML());
+    const dataToSend = {
+      title: "test title post",
+      subTitle: "test sub",
+      content: editor.getHTML(),
+      image: null,
+      tag: "Hot",
+      status: "active"
+    }
+    startLoading();
+    setLoading(true);
+    try {
+      const result = PostService.createPost(dataToSend);
+      openToast("success", result.code);
+    } catch (error) {
+      openToast("error", error);
+    } finally {
+      stopLoading();
+      setLoading(false);
+    }
   };
+
   return (
     <>
       <div className="control-group">
         <div className="button-group">
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleSubmit} loading={loading}>Submit</Button>
         </div>
       </div>
       <ImageModal isOpen={open} handleOpen={handleOpen} setImage={setImage}/>
