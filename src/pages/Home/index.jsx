@@ -1,7 +1,6 @@
-import React from 'react'
-
+import React from "react";
+import { useTitle } from "../../components/Title";
 export default function Home() {
-  return (
-    <div>Home</div>
-  )
+  useTitle("Home");
+  return <div>Home</div>;
 }

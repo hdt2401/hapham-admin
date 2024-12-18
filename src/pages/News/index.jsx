@@ -14,6 +14,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import MenuBar from "./MenuBar";
 import ImageModal from "./Modals/ImageModal";
 import ImageResize from "tiptap-extension-resize-image";
+import { useTitle } from "../../components/Title";
 
 const extensions = [
   Underline,
@@ -43,6 +44,7 @@ const extensions = [
 ];
 
 export default function News() {
+  useTitle("News");
   const [open, setOpen] = useState(false);
   const editor = useEditor({
     extensions: extensions,

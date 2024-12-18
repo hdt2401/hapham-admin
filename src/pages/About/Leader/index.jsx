@@ -11,8 +11,10 @@ import {
 } from "@ant-design/icons";
 import { useLoading } from "../../../components/Loading/index.jsx";
 import { useToast } from "../../../components/Toast/index.jsx";
+import { useTitle } from "../../../components/Title/index.jsx";
 
 function LeaderTable() {
+  useTitle("Leader");
   const [leaderList, setLeaderList] = useState([]);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);

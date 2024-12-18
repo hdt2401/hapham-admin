@@ -11,8 +11,10 @@ import {
 } from "@ant-design/icons";
 import { useLoading } from "../../../components/Loading";
 import { useToast } from "../../../components/Toast";
+import { useTitle } from "../../../components/Title/index.jsx";
 
 function CertificateTable() {
+  useTitle("Certificate");
   const [certificateList, setCertificateList] = useState([]);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
