@@ -57,7 +57,7 @@ export default function UpdateProduct({
       setPreviewOpen(true);
     },
     onChange: ({ fileList: newFile }) => {
-      setFile(newFile.length == 0 ? null : newFile);
+      setFile(newFile.length === 0 ? null : newFile);
       setCheckImage(!checkImage);
     },
   };

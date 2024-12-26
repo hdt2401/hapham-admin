@@ -1,7 +1,6 @@
 import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import TextArea from "antd/es/input/TextArea";
 import { storage } from "../../../../firebase/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
@@ -57,7 +56,7 @@ export default function UpdateCertificate({
       setPreviewOpen(true);
     },
     onChange: ({ fileList: newFile }) => {
-      setFile(newFile.length == 0 ? null : newFile);
+      setFile(newFile.length === 0 ? null : newFile);
       setCheckImage(!checkImage);
     },
   };

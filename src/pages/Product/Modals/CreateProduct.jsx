@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebase/firebaseConfig.js";
 import { Button, Form, Image, Input, Modal, Upload } from "antd";
 
-import { InboxOutlined, UploadOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  // InboxOutlined,
+  // UploadOutlined,
+} from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea.js";
 
 const getBase64 = (file) =>
@@ -45,7 +48,7 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
       setPreviewOpen(true);
     },
     onChange: ({ fileList: newFile }) => {
-      setFile(newFile.length == 0 ? null : newFile);
+      setFile(newFile.length === 0 ? null : newFile);
     },
   };
 

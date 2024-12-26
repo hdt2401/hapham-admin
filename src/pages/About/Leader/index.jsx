@@ -6,8 +6,8 @@ import { Button, Table, Image, Tag, Popconfirm, Tooltip, Space } from "antd";
 import {
   EditTwoTone,
   DeleteTwoTone,
-  LockTwoTone,
-  UnlockTwoTone,
+  // LockTwoTone,
+  // UnlockTwoTone,
 } from "@ant-design/icons";
 import { useLoading } from "../../../components/Loading/index.jsx";
 import { useToast } from "../../../components/Toast/index.jsx";
@@ -78,7 +78,7 @@ function LeaderTable() {
       key: "status",
       render: (src) => (
         <Tag
-          color={src == "active" ? "green" : src == "inactive" ? "red" : "null"}
+          color={src === "active" ? "green" : src === "inactive" ? "red" : "null"}
         >
           {src}
         </Tag>
@@ -109,10 +109,10 @@ function LeaderTable() {
             </Popconfirm>
           </Tooltip>
           {/* <Tooltip
-            title={record.status == "active" ? "Inactive" : "Active"}
+            title={record.status === "active" ? "Inactive" : "Active"}
             trigger={["hover"]}
           >
-            {record.status == "active" ? (
+            {record.status === "active" ? (
               <LockTwoTone
                 style={{ fontSize: "20px" }}
                 onClick={() => console.log(record)}

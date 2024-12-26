@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase/firebaseConfig";
 import { Button, Form, Image, Input, Modal, Upload } from "antd";
-import { InboxOutlined, UploadOutlined, PlusOutlined } from "@ant-design/icons";
-import TextArea from "antd/es/input/TextArea.js";
+import {
+  PlusOutlined, 
+  // InboxOutlined,
+  // UploadOutlined
+} from "@ant-design/icons";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -13,7 +16,11 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-export default function CreateCertificate({ isOpen, handleOpenModal, onCreate }) {
+export default function CreateCertificate({
+  isOpen,
+  handleOpenModal,
+  onCreate,
+}) {
   const defaultValues = {
     fullname: "",
     position: "",
@@ -42,7 +49,7 @@ export default function CreateCertificate({ isOpen, handleOpenModal, onCreate })
       setPreviewOpen(true);
     },
     onChange: ({ fileList: newFile }) => {
-      setFile(newFile.length == 0 ? null : newFile);
+      setFile(newFile.length === 0 ? null : newFile);
     },
   };
 

@@ -40,7 +40,7 @@ export default function CreateCertificate({ isOpen, handleOpenModal, onCreate })
       setPreviewOpen(true);
     },
     onChange: ({ fileList: newFile }) => {
-      setFile(newFile.length == 0 ? null : newFile);
+      setFile(newFile.length === 0 ? null : newFile);
     },
   };
 

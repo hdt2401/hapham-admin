@@ -30,10 +30,10 @@ const ImageModal = ({ isOpen, handleOpen, setImage }) => {
       return false;
     },
     onChange: ({ fileList: newFile }) => {
-      setFile(newFile.length == 0 ? null : newFile);
+      setFile(newFile.length === 0 ? null : newFile);
     },
     onDrop: ({ fileList: newFile }) => {
-      setFile(newFile.length == 0 ? null : newFile);
+      setFile(newFile.length === 0 ? null : newFile);
     },
     onPreview: async (file) => {
       if (!file.url && !file.preview) {

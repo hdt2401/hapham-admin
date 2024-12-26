@@ -1,5 +1,3 @@
-import "./styles.scss";
-
 import React, { useCallback, useState } from "react";
 import { Button } from "antd";
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -11,13 +9,14 @@ import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import Placeholder from "@tiptap/extension-placeholder";
-import MenuBar from "./MenuBar";
+import MenuBar from "./components/MenuBar.jsx";
 import ImageModal from "./Modals/ImageModal";
 import ImageResize from "tiptap-extension-resize-image";
-import { useTitle } from "../../components/Title";
+// import { useTitle } from "../../../components/Title";
 import { useLoading } from "../../components/Loading";
 import { useToast } from "../../components/Toast";
 import PostService from "../../services/post.ts";
+import { useTitle } from "../../components/Title/index.jsx";
 
 const extensions = [
   Underline,
@@ -47,7 +46,7 @@ const extensions = [
 ];
 
 export default function News() {
-  useTitle("News");
+  useTitle('News');
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const editor = useEditor({

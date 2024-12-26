@@ -258,7 +258,7 @@ const App = () => {
               margin: "16px",
               padding: 24,
               background: "#fff",
-              minHeight: "calc(100vh - 64px)",
+              height: "calc(100vh - 100px)",
             }}
           >
             <Routes>
