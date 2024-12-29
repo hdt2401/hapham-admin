@@ -1,4 +1,13 @@
-import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Image,
+  Input,
+  Modal,
+  Select,
+  Upload,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -137,8 +146,17 @@ export default function UpdateCertificate({
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Date" name="date">
-          <Input />
+        <Form.Item
+          label="Date"
+          name="date"
+          rules={[
+            {
+              required: true,
+              message: "Date is required!",
+            },
+          ]}
+        >
+          <DatePicker />
         </Form.Item>
         <Form.Item label="Status" name="status">
           <Select

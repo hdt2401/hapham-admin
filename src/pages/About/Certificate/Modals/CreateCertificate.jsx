@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase/firebaseConfig";
-import { Button, Form, Image, Input, Modal, Upload } from "antd";
+import { Button, DatePicker, Form, Image, Input, Modal, Upload } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 const getBase64 = (file) =>
@@ -12,7 +12,11 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-export default function CreateCertificate({ isOpen, handleOpenModal, onCreate }) {
+export default function CreateCertificate({
+  isOpen,
+  handleOpenModal,
+  onCreate,
+}) {
   const defaultValues = {
     title: "",
     date: "",
@@ -112,8 +116,17 @@ export default function CreateCertificate({ isOpen, handleOpenModal, onCreate })
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Date" name="date">
-          <Input />
+        <Form.Item
+          label="Date"
+          name="date"
+          rules={[
+            {
+              required: true,
+              message: "Date is required!",
+            },
+          ]}
+        >
+          <DatePicker />
         </Form.Item>
         <Form.Item label="Image" name="image">
           <Upload {...propsUpload}>
