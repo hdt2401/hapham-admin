@@ -12,11 +12,11 @@ import Placeholder from "@tiptap/extension-placeholder";
 import MenuBar from "./components/MenuBar.jsx";
 import ImageModal from "./Modals/ImageModal";
 import ImageResize from "tiptap-extension-resize-image";
-// import { useTitle } from "../../../components/Title";
 import { useLoading } from "../../components/Loading";
 import { useToast } from "../../components/Toast";
 import PostService from "../../services/post.ts";
 import { useTitle } from "../../components/Title/index.jsx";
+import './styles.scss';
 
 const extensions = [
   Underline,
@@ -24,7 +24,7 @@ const extensions = [
   Color.configure({ types: [TextStyle.name, ListItem.name] }),
   TextStyle.configure({ types: [ListItem.name] }),
   Placeholder.configure({
-    placeholder: "Write something …",
+    placeholder: "Write something…",
   }),
   TextAlign.configure({
     types: ["heading", "paragraph"],
@@ -95,14 +95,10 @@ export default function News() {
 
   return (
     <>
-      <div className="control-group">
-        <div className="button-group">
-          <Button onClick={handleSubmit} loading={loading}>Submit</Button>
-        </div>
-      </div>
+      <Button onClick={handleSubmit} loading={loading}>Submit</Button>
       <ImageModal isOpen={open} handleOpen={handleOpen} setImage={setImage}/>
       <MenuBar editor={editor} openModalImage={()=> handleOpen()}/>
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} className="news-editor"/>
     </>
   );
 }

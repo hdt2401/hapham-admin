@@ -16,6 +16,14 @@ import {
   UnorderedListOutlined,
 } from "@ant-design/icons";
 
+const buttonGroupStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  padding: "8px",
+  backgroundColor: "#f2f2f2",
+};
+
 const MenuBar = ({ editor, openModalImage }) => {
   if (!editor) {
     return null;
@@ -23,7 +31,7 @@ const MenuBar = ({ editor, openModalImage }) => {
 
   return (
     <div className="control-group">
-      <div className="button-group">
+      <div className="button-group" style={buttonGroupStyle}>
         <Button
           icon={<UndoOutlined />}
           onClick={() => editor.chain().focus().undo().run()}

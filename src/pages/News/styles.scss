@@ -1,6 +1,9 @@
 
 /* Basic editor styles */
 .news-editor {
+  border: 1px solid #f2f2f2;
+  padding: 8px;
+
   &:last-child :focus-visible {
     outline: none;
   }
@@ -191,3 +194,12 @@
   user-select: none;
   white-space: nowrap;
 }
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
