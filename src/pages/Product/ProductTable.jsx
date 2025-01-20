@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react";
 import ProductService from "../../services/product.ts";
 import CreateProduct from "./Modals/CreateProduct.jsx";
 import UpdateProduct from "./Modals/UpdateProduct.jsx";
-import { Button, Table, Image, Tag, Popconfirm, Tooltip, Space } from "antd";
+import {
+  Button,
+  Table,
+  Image,
+  Tag,
+  Popconfirm,
+  Tooltip,
+  Space,
+} from "antd";
 import {
   EditTwoTone,
   DeleteTwoTone,
@@ -13,39 +21,50 @@ import { useLoading } from "../../components/Loading/index.jsx";
 import { useToast } from "../../components/Toast/index.jsx";
 
 function ProductTable() {
-  const [productList, setProductList] = useState([]);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const { startLoading, stopLoading } = useLoading();
-  const {openToast} = useToast();
+  const { openToast } = useToast();
   const [dataDetail, setDataDetail] = useState();
-  useEffect(() => {
-    productListFetch();
-  }, []);
+  const [dataFetching, setDataFetching] = useState();
+  const [tableParams, setTableParams] = useState({
+    pagination: {
+      page: 1,
+      pageSize: 10,
+    },
+  });
 
-  const productListFetch = async () => {
+  const productListFetch = async ({ page, pageSize }) => {
     try {
       startLoading();
-      const res = await ProductService.getProductList();
-      if (res) {
-        const list = [...res.data.data].map((e) => {
-          return {
-            id: e._id,
-            title: e.title,
-            subTitle: e.subTitle,
-            description: e.description,
-            image: e.image,
-            price: e.price,
-            status: e.status,
-          };
-        });
-        setProductList(list);
-      }
+      const res = await ProductService.getProductList({ page, pageSize });
+      const data = res.data.data;
+      const productList = [...data.products].map((e) => {
+        return {
+          id: e._id,
+          title: e.title,
+          subTitle: e.subTitle,
+          description: e.description,
+          image: e.image,
+          price: e.price,
+          status: e.status,
+        };
+      });
+      setDataFetching({
+        productList,
+        totalProducts: data.totalProducts,
+        totalPages: data.totalPages,
+        currentPage: data.currentPage,
+      });
     } catch (error) {
     } finally {
       stopLoading();
     }
   };
+
+  useEffect(() => {
+    productListFetch(tableParams.pagination);
+  }, [tableParams.pagination?.page, tableParams.pagination?.pageSize]);
 
   const columns = [
     {
@@ -53,7 +72,7 @@ function ProductTable() {
       dataIndex: "title",
       key: "title",
     },
-    
+
     {
       title: "Sub-Title",
       dataIndex: "subTitle",
@@ -65,7 +84,7 @@ function ProductTable() {
       dataIndex: "image",
       key: "image",
       width: 240,
-      render: (src) => <Image src={src} alt="image" width={200}/>,
+      render: (src) => <Image src={src} alt="image" width={200} />,
     },
     {
       title: "Price",
@@ -78,7 +97,9 @@ function ProductTable() {
       key: "status",
       render: (src) => (
         <Tag
-          color={src === "active" ? "green" : src === "inactive" ? "red" : "null"}
+          color={
+            src === "active" ? "green" : src === "inactive" ? "red" : "null"
+          }
         >
           {src}
         </Tag>
@@ -152,13 +173,13 @@ function ProductTable() {
     try {
       const result = await ProductService.createProduct(data);
       setOpenCreateModal(false);
-      if(result) {
-        openToast('success', "Thành công");
+      if (result) {
+        openToast("success", "Thành công");
       }
       console.log(result);
       productListFetch();
     } catch (error) {
-      openToast('error', error);
+      openToast("error", error);
     }
   };
 
@@ -166,12 +187,12 @@ function ProductTable() {
     try {
       const result = await ProductService.updateProduct(id, data);
       setOpenUpdateModal(false);
-      if(result) {
-        openToast('success', "Thành công");
+      if (result) {
+        openToast("success", "Thành công");
       }
       productListFetch();
     } catch (error) {
-      openToast('error', error);
+      openToast("error", error);
     }
   };
 
@@ -180,7 +201,7 @@ function ProductTable() {
       await ProductService.deleteProduct(id);
       productListFetch();
     } catch (error) {
-      openToast('error', error);
+      openToast("error", error);
     }
   };
 
@@ -203,7 +224,28 @@ function ProductTable() {
       </Button>
 
       <div className="flex flex-col gap-10">
-        <Table dataSource={productList} columns={columns} />
+        <Table
+          dataSource={dataFetching?.productList}
+          columns={columns}
+          loading={dataFetching ? false : true}
+          pagination={{
+            defaultCurrent: 1,
+            showQuickJumper: true,
+            showSizeChanger: true,
+            onChange: async (page, pageSize) => {
+              await productListFetch({ page, pageSize });
+            },
+            onShowSizeChange: async (current, size) => {
+              await productListFetch({ current, size });
+            },
+            total: dataFetching?.totalProducts,
+            showTotal: (result) => `Total ${result} items`,
+          }}
+          scroll={{
+            x: 'max-content',
+            y: "calc(100vh - 320px)",
+          }}
+        />
       </div>
     </div>
   );

@@ -9,14 +9,16 @@ import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import Placeholder from "@tiptap/extension-placeholder";
+import MenuBar from "./MenuBar.jsx";
+import ImageModal from "../Modals/ImageModal.jsx";
 import ImageResize from "tiptap-extension-resize-image";
-import { useLoading } from "../../components/Loading";
-import { useToast } from "../../components/Toast";
-import PostService from "../../services/post.ts";
-import { useTitle } from "../../components/Title/index.jsx";
-import "./styles.scss";
-import NewsTable from "./components/NewsTable/index.jsx";
-import NewsDetail from "./components/NewsDetail/index.jsx";
+import { useLoading } from "../../../../components/Loading";
+import { useToast } from "../../../../components/Toast";
+import PostService from "../../../../services/post.ts";
+import { useTitle } from "../../../../components/Title";
+import "../../styles.scss";
+// import { MODE } from "../../index.jsx";
+
 
 const extensions = [
   Underline,
@@ -45,13 +47,8 @@ const extensions = [
   }),
 ];
 
-export const MODE = {
-  list: "LIST",
-  create: "CREATE",
-  update: "UPDATE",
-};
 
-export default function News() {
+export default function NewsDetail({ newsMode, title }) {
   useTitle("News");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -61,11 +58,6 @@ export default function News() {
   });
   const { startLoading, stopLoading } = useLoading();
   const { openToast } = useToast();
-  const [mode, setMode] = useState(MODE.list);
-
-  // const handleMode = (value) => {
-  //   setMode(value);
-  // };
 
   const setImage = useCallback(
     (image) => {
@@ -85,51 +77,38 @@ export default function News() {
   }
 
   const handleSubmit = () => {
-    console.log(editor.getHTML());
-    const dataToSend = {
-      title: "test title post",
-      subTitle: "test sub",
-      content: editor.getHTML(),
-      image: null,
-      tag: "Hot",
-      status: "active",
-    };
-    startLoading();
-    setLoading(true);
-    try {
-      const result = PostService.createPost(dataToSend);
-      openToast("success", result.code);
-    } catch (error) {
-      openToast("error", error);
-    } finally {
-      stopLoading();
-      setLoading(false);
-    }
+    // console.log(editor.getHTML());
+    // const dataToSend = {
+    //   title: "test title post",
+    //   subTitle: "test sub",
+    //   content: editor.getHTML(),
+    //   image: null,
+    //   tag: "Hot",
+    //   status: "active",
+    // };
+    // startLoading();
+    // setLoading(true);
+    // try {
+    //   const result = PostService.createPost(dataToSend);
+    //   openToast("success", result.code);
+    // } catch (error) {
+    //   openToast("error", error);
+    // } finally {
+    //   stopLoading();
+    //   setLoading(false);
+    // }
   };
 
   return (
     <>
-      {mode === MODE.list ? (
-        <div className="news-table">
-          <Button
-            style={{ marginBottom: "2rem" }}
-            onClick={() => setMode(MODE.create)}
-          >
-            Add new news
-          </Button>
-          <NewsTable />
-        </div>
-      ) : (
-        <div className="news-detail">
-          <Button
-            style={{ marginBottom: "2rem" }}
-            onClick={() => setMode(MODE.list)}
-          >
-            Back
-          </Button>
-          <NewsDetail newsMode={mode} />
-        </div>
-      )}
+      <div className="create-news">
+        <Button onClick={handleSubmit} loading={loading}>
+          Submit
+        </Button>
+        <ImageModal isOpen={open} handleOpen={handleOpen} setImage={setImage} />
+        <MenuBar editor={editor} openModalImage={() => handleOpen()} />
+        <EditorContent editor={editor} className="news-editor" />
+      </div>
     </>
   );
 }

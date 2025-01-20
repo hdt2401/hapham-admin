@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Image, Modal, Upload } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
-import { useToast } from "../../../components/Toast";
+import { useToast } from "../../../../components/Toast";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "../../../firebase/firebaseConfig";
+import { storage } from "../../../../firebase/firebaseConfig";
 
 const { Dragger } = Upload;
 
