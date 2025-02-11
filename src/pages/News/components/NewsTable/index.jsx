@@ -9,7 +9,7 @@ import { useLoading } from "../../../../components/Loading";
 import { useToast } from "../../../../components/Toast";
 import { useTitle } from "../../../../components/Title/index.jsx";
 
-function NewsTable() {
+function NewsTable({onNavigate}) {
   useTitle("News");
   const [newsList, setNewsList] = useState([]);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
@@ -67,7 +67,7 @@ function NewsTable() {
           <Tooltip title="Edit" trigger={["hover"]}>
             <EditTwoTone
               style={{ fontSize: "20px" }}
-              onClick={() => onOpenUpdateModal(record)}
+              onClick={() => onNavigate(record)}
             />
           </Tooltip>
           <Tooltip title="Delete" trigger={["hover"]}>
@@ -105,41 +105,6 @@ function NewsTable() {
       ),
     },
   ];
-
-  const onOpenUpdateModal = async (record) => {
-    if (openUpdateModal) {
-      setOpenUpdateModal(!openUpdateModal);
-    } else {
-      setDataDetail(record);
-      setOpenUpdateModal(!openUpdateModal);
-    }
-  };
-
-  const handleCreateNews = async (data) => {
-    try {
-      const result = await PostService.createNews(data);
-      if (result) {
-        openToast("success", "Thành công");
-      }
-      console.log(result);
-      newsListFetch();
-    } catch (error) {
-      openToast("error", error);
-    }
-  };
-
-  const handleUpdateNews = async (id, data) => {
-    try {
-      const result = await PostService.updateNews(id, data);
-      setOpenUpdateModal(false);
-      if (result) {
-        openToast("success", "Thành công");
-      }
-      newsListFetch();
-    } catch (error) {
-      openToast("error", error);
-    }
-  };
 
   const handleDeleteNews = async (id) => {
     try {

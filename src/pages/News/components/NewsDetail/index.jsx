@@ -12,12 +12,9 @@ import Placeholder from "@tiptap/extension-placeholder";
 import MenuBar from "./MenuBar.jsx";
 import ImageModal from "../Modals/ImageModal.jsx";
 import ImageResize from "tiptap-extension-resize-image";
-import { useLoading } from "../../../../components/Loading";
-import { useToast } from "../../../../components/Toast";
-import PostService from "../../../../services/post.ts";
 import { useTitle } from "../../../../components/Title";
 import "../../styles.scss";
-// import { MODE } from "../../index.jsx";
+import { MODE } from "../../index.jsx";
 
 const extensions = [
   Underline,
@@ -46,22 +43,20 @@ const extensions = [
   }),
 ];
 
-const defaultValues = {
-  title: "",
-  subTitle: "",
-};
-
-export default function NewsDetail({ newsMode, title, onSubmit }) {
-  useTitle("News detail");
+export default function NewsDetail({ newsMode, title, onSubmit, detail }) {
+  useTitle(newsMode == MODE.create ? "News detail" : detail.title);
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const editor = useEditor({
     extensions: extensions,
-    content: null,
+    content: newsMode == MODE.create ? "" : detail.content,
   });
-  const { startLoading, stopLoading } = useLoading();
-  const { openToast } = useToast();
+
+  const defaultValues = {
+    title: newsMode == MODE.create ? "" : detail.title,
+    subTitle: newsMode == MODE.create ? "" : detail.subTitle,
+  };
 
   const setImage = useCallback(
     (image) => {

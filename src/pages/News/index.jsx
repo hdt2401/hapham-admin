@@ -1,15 +1,5 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "antd";
-import { EditorContent, useEditor } from "@tiptap/react";
-import { Color } from "@tiptap/extension-color";
-import ListItem from "@tiptap/extension-list-item";
-import TextStyle from "@tiptap/extension-text-style";
-import Underline from "@tiptap/extension-underline";
-import StarterKit from "@tiptap/starter-kit";
-import TextAlign from "@tiptap/extension-text-align";
-import Dropcursor from "@tiptap/extension-dropcursor";
-import Placeholder from "@tiptap/extension-placeholder";
-import ImageResize from "tiptap-extension-resize-image";
 import { useLoading } from "../../components/Loading";
 import { useToast } from "../../components/Toast";
 import PostService from "../../services/post.ts";
@@ -30,14 +20,19 @@ export default function News() {
   const { startLoading, stopLoading } = useLoading();
   const { openToast } = useToast();
   const [mode, setMode] = useState(MODE.list);
+  const [dataDetail, setDataDetail] = useState();
 
   const handleSubmit = async (data) => {
-    console.log(data)
     setLoading(true);
     startLoading();
     try {
-      await PostService.createPost(data);
-      openToast("success", "News created successfully");
+      if (mode === MODE.update) {
+        await PostService.updatePost(dataDetail._id, data);
+        openToast("success", "News updated successfully");
+      } else {
+        await PostService.createPost(data);
+        openToast("success", "News created successfully");
+      }
       setMode(MODE.list);
     } catch (error) {
       openToast("error", error.message);
@@ -46,6 +41,16 @@ export default function News() {
       stopLoading();
     }
   };
+
+  const navigateToDetail = async (data) => {
+    try {
+      const result = await PostService.getPost(data.id);
+      setDataDetail(result.data.data);
+      setMode(MODE.update);
+    } catch (error) {
+      openToast("error", error.message);
+    }
+  }
 
   return (
     <>
@@ -57,7 +62,7 @@ export default function News() {
           >
             Add new news
           </Button>
-          <NewsTable />
+          <NewsTable onNavigate={navigateToDetail}/>
         </div>
       ) : (
         <div className="news-detail">
@@ -67,7 +72,7 @@ export default function News() {
           >
             Back
           </Button>
-          <NewsDetail newsMode={mode} onSubmit={handleSubmit}/>
+          <NewsDetail newsMode={mode} onSubmit={handleSubmit} detail={dataDetail}/>
         </div>
       )}
     </>
