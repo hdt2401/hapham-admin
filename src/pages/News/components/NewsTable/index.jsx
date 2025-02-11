@@ -6,40 +6,10 @@ import {
   DeleteTwoTone,
 } from "@ant-design/icons";
 import { useLoading } from "../../../../components/Loading";
-import { useToast } from "../../../../components/Toast";
 import { useTitle } from "../../../../components/Title/index.jsx";
 
-function NewsTable({onNavigate}) {
+function NewsTable({onNavigate, data, onDelete}) {
   useTitle("News");
-  const [newsList, setNewsList] = useState([]);
-  const [openUpdateModal, setOpenUpdateModal] = useState(false);
-  const { startLoading, stopLoading } = useLoading();
-  const { openToast } = useToast();
-  const [dataDetail, setDataDetail] = useState();
-
-  useEffect(() => {
-    newsListFetch();
-  }, []);
-
-  const newsListFetch = async () => {
-    try {
-      startLoading();
-      const res = await PostService.getPostList();
-      if (res) {
-        const list = [...res.data.data].map((e) => {
-          return {
-            id: e._id,
-            title: e.title,
-            status: e.status,
-          };
-        });
-        setNewsList(list);
-      }
-    } catch (error) {
-    } finally {
-      stopLoading();
-    }
-  };
 
   const columns = [
     {
@@ -73,7 +43,7 @@ function NewsTable({onNavigate}) {
           <Tooltip title="Delete" trigger={["hover"]}>
             <Popconfirm
               title={`Do you want to delete news ${record.title}?`}
-              onConfirm={() => handleDeleteNews(record.id)}
+              onConfirm={() => onDelete(record.id)}
               okText="Delete"
               cancelText="Cancel"
             >
@@ -106,19 +76,10 @@ function NewsTable({onNavigate}) {
     },
   ];
 
-  const handleDeleteNews = async (id) => {
-    try {
-      await PostService.deleteNews(id);
-      newsListFetch();
-    } catch (error) {
-      openToast("error", error);
-    }
-  };
-
   return (
     <div className="news-table">
       <div className="flex flex-col gap-10">
-        <Table dataSource={newsList} columns={columns} />
+        <Table dataSource={data} columns={columns} />
       </div>
     </div>
   );

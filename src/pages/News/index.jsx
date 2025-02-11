@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "antd";
 import { useLoading } from "../../components/Loading";
 import { useToast } from "../../components/Toast";
@@ -21,6 +21,31 @@ export default function News() {
   const { openToast } = useToast();
   const [mode, setMode] = useState(MODE.list);
   const [dataDetail, setDataDetail] = useState();
+  const [newsList, setNewsList] = useState([]);
+
+  useEffect(() => {
+    newsListFetch();
+  }, []);
+
+  const newsListFetch = async () => {
+    try {
+      startLoading();
+      const res = await PostService.getPostList();
+      if (res) {
+        const list = [...res.data.data].map((e) => {
+          return {
+            id: e._id,
+            title: e.title,
+            status: e.status,
+          };
+        });
+        setNewsList(list);
+      }
+    } catch (error) {
+    } finally {
+      stopLoading();
+    }
+  };
 
   const handleSubmit = async (data) => {
     setLoading(true);
@@ -50,7 +75,17 @@ export default function News() {
     } catch (error) {
       openToast("error", error.message);
     }
-  }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await PostService.deletePost(id);
+      openToast("success", "News deleted successfully");
+      newsListFetch();
+    } catch (error) {
+      openToast("error", error.message);
+    }
+  };
 
   return (
     <>
@@ -62,7 +97,11 @@ export default function News() {
           >
             Add new news
           </Button>
-          <NewsTable onNavigate={navigateToDetail}/>
+          <NewsTable
+            onNavigate={navigateToDetail}
+            data={newsList}
+            onDelete={handleDelete}
+          />
         </div>
       ) : (
         <div className="news-detail">
@@ -72,7 +111,11 @@ export default function News() {
           >
             Back
           </Button>
-          <NewsDetail newsMode={mode} onSubmit={handleSubmit} detail={dataDetail}/>
+          <NewsDetail
+            newsMode={mode}
+            onSubmit={handleSubmit}
+            detail={dataDetail}
+          />
         </div>
       )}
     </>
