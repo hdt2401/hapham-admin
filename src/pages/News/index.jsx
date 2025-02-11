@@ -59,6 +59,7 @@ export default function News() {
         openToast("success", "News created successfully");
       }
       setMode(MODE.list);
+      newsListFetch();
     } catch (error) {
       openToast("error", error.message);
     } finally {
