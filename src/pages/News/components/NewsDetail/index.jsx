@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button } from "antd";
+import { Button, Input, Form } from "antd";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { Color } from "@tiptap/extension-color";
 import ListItem from "@tiptap/extension-list-item";
@@ -18,7 +18,6 @@ import PostService from "../../../../services/post.ts";
 import { useTitle } from "../../../../components/Title";
 import "../../styles.scss";
 // import { MODE } from "../../index.jsx";
-
 
 const extensions = [
   Underline,
@@ -47,9 +46,14 @@ const extensions = [
   }),
 ];
 
+const defaultValues = {
+  title: "",
+  subTitle: "",
+};
 
-export default function NewsDetail({ newsMode, title }) {
-  useTitle("News");
+export default function NewsDetail({ newsMode, title, onSubmit }) {
+  useTitle("News detail");
+  const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const editor = useEditor({
@@ -76,35 +80,67 @@ export default function NewsDetail({ newsMode, title }) {
     return null;
   }
 
-  const handleSubmit = () => {
-    // console.log(editor.getHTML());
-    // const dataToSend = {
-    //   title: "test title post",
-    //   subTitle: "test sub",
-    //   content: editor.getHTML(),
-    //   image: null,
-    //   tag: "Hot",
-    //   status: "active",
-    // };
-    // startLoading();
-    // setLoading(true);
-    // try {
-    //   const result = PostService.createPost(dataToSend);
-    //   openToast("success", result.code);
-    // } catch (error) {
-    //   openToast("error", error);
-    // } finally {
-    //   stopLoading();
-    //   setLoading(false);
-    // }
+  const handleFinish = async () => {
+    try {
+      await form.validateFields();
+      const data = form.getFieldsValue();
+      const dataToSend = {
+        title: data?.title,
+        subTitle: data?.subTitle,
+        content: editor.getHTML(),
+        image: null,
+        tag: "Hot",
+        status: "active",
+      };
+      onSubmit(dataToSend);
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
     <>
       <div className="create-news">
-        <Button onClick={handleSubmit} loading={loading}>
+        <Button onClick={handleFinish} loading={loading}>
           Submit
         </Button>
+        <Form
+          form={form}
+          name="form"
+          initialValues={defaultValues}
+          onFinish={handleFinish}
+          labelCol={{
+            span: 2,
+          }}
+          wrapperCol={{
+            span: 22,
+          }}
+        >
+          <Form.Item
+            label="Title"
+            name="title"
+            rules={[
+              {
+                required: true,
+                message: "Title is required!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Sub-title"
+            name="subTitle"
+            rules={[
+              {
+                required: true,
+                message: "Sub-title is required!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
         <ImageModal isOpen={open} handleOpen={handleOpen} setImage={setImage} />
         <MenuBar editor={editor} openModalImage={() => handleOpen()} />
         <EditorContent editor={editor} className="news-editor" />

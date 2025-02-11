@@ -177,7 +177,7 @@ function ProductTable() {
         openToast("success", "Thành công");
       }
       console.log(result);
-      productListFetch();
+      productListFetch(tableParams.pagination);
     } catch (error) {
       openToast("error", error);
     }
@@ -190,7 +190,7 @@ function ProductTable() {
       if (result) {
         openToast("success", "Thành công");
       }
-      productListFetch();
+      productListFetch(tableParams.pagination);
     } catch (error) {
       openToast("error", error);
     }
@@ -199,7 +199,7 @@ function ProductTable() {
   const handleDeleteProduct = async (id) => {
     try {
       await ProductService.deleteProduct(id);
-      productListFetch();
+      productListFetch(tableParams.pagination);
     } catch (error) {
       openToast("error", error);
     }

@@ -18,33 +18,6 @@ import "./styles.scss";
 import NewsTable from "./components/NewsTable/index.jsx";
 import NewsDetail from "./components/NewsDetail/index.jsx";
 
-const extensions = [
-  Underline,
-  ImageResize,
-  Color.configure({ types: [TextStyle.name, ListItem.name] }),
-  TextStyle.configure({ types: [ListItem.name] }),
-  Placeholder.configure({
-    placeholder: "Write something…",
-  }),
-  TextAlign.configure({
-    types: ["heading", "paragraph"],
-  }),
-  Dropcursor.configure({
-    color: "#6A00F5",
-    width: 2,
-  }),
-  StarterKit.configure({
-    bulletList: {
-      keepMarks: true,
-      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-    },
-    orderedList: {
-      keepMarks: true,
-      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-    },
-  }),
-];
-
 export const MODE = {
   list: "LIST",
   create: "CREATE",
@@ -53,57 +26,24 @@ export const MODE = {
 
 export default function News() {
   useTitle("News");
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const editor = useEditor({
-    extensions: extensions,
-    content: null,
-  });
   const { startLoading, stopLoading } = useLoading();
   const { openToast } = useToast();
   const [mode, setMode] = useState(MODE.list);
 
-  // const handleMode = (value) => {
-  //   setMode(value);
-  // };
-
-  const setImage = useCallback(
-    (image) => {
-      if (image) {
-        editor.chain().focus().setImage({ src: image }).run();
-      }
-    },
-    [editor]
-  );
-
-  const handleOpen = () => {
-    setOpen(!open);
-  };
-
-  if (!editor) {
-    return null;
-  }
-
-  const handleSubmit = () => {
-    console.log(editor.getHTML());
-    const dataToSend = {
-      title: "test title post",
-      subTitle: "test sub",
-      content: editor.getHTML(),
-      image: null,
-      tag: "Hot",
-      status: "active",
-    };
-    startLoading();
+  const handleSubmit = async (data) => {
+    console.log(data)
     setLoading(true);
+    startLoading();
     try {
-      const result = PostService.createPost(dataToSend);
-      openToast("success", result.code);
+      await PostService.createPost(data);
+      openToast("success", "News created successfully");
+      setMode(MODE.list);
     } catch (error) {
-      openToast("error", error);
+      openToast("error", error.message);
     } finally {
-      stopLoading();
       setLoading(false);
+      stopLoading();
     }
   };
 
@@ -127,7 +67,7 @@ export default function News() {
           >
             Back
           </Button>
-          <NewsDetail newsMode={mode} />
+          <NewsDetail newsMode={mode} onSubmit={handleSubmit}/>
         </div>
       )}
     </>
