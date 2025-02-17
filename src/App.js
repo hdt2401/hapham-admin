@@ -17,7 +17,7 @@ import {
 } from "@ant-design/icons";
 import { Routes, Route, NavLink, Link, useLocation } from "react-router";
 import Product from "./pages/Product";
-import News from "./pages/News";
+import Post from "./pages/Post";
 import About from "./pages/About";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
@@ -42,9 +42,9 @@ const mainMenu = [
     label: <NavLink to="/product">Product</NavLink>,
   },
   {
-    key: "news",
+    key: "post",
     icon: <ReadOutlined />,
-    label: <NavLink to="/news">News</NavLink>,
+    label: <NavLink to="/post">Post</NavLink>,
   },
   {
     key: "about",
@@ -264,7 +264,7 @@ const App = () => {
             <Routes>
               <Route path="" index element={<Home />} title="Home"/>
               <Route path="/product" element={<Product />} />
-              <Route path="/news" element={<News />} />
+              <Route path="/post" element={<Post />} />
               <Route path="about" element={<About />}>
                 {/* </Route> */}
                 <Route path="certificate" element={<Certificate />} />

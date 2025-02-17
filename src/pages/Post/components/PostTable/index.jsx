@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import PostService from "../../../../services/post.ts";
 import { Button, Table, Image, Tag, Popconfirm, Tooltip, Space } from "antd";
-import {
-  EditTwoTone,
-  DeleteTwoTone,
-} from "@ant-design/icons";
-import { useLoading } from "../../../../components/Loading";
+import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
+import { useLoading } from "../../../../components/Loading/index.jsx";
 import { useTitle } from "../../../../components/Title/index.jsx";
 
-function NewsTable({onNavigate, data, onDelete}) {
-  useTitle("News");
+function PostTable({ onNavigate, data, onDelete, onLoadData }) {
+  useTitle("Post");
 
   const columns = [
     {
@@ -23,7 +20,9 @@ function NewsTable({onNavigate, data, onDelete}) {
       key: "status",
       render: (src) => (
         <Tag
-          color={src === "active" ? "green" : src === "inactive" ? "red" : "null"}
+          color={
+            src === "active" ? "green" : src === "inactive" ? "red" : "null"
+          }
         >
           {src}
         </Tag>
@@ -42,7 +41,7 @@ function NewsTable({onNavigate, data, onDelete}) {
           </Tooltip>
           <Tooltip title="Delete" trigger={["hover"]}>
             <Popconfirm
-              title={`Do you want to delete news ${record.title}?`}
+              title={`Do you want to delete post ${record.title}?`}
               onConfirm={() => onDelete(record.id)}
               okText="Delete"
               cancelText="Cancel"
@@ -77,12 +76,33 @@ function NewsTable({onNavigate, data, onDelete}) {
   ];
 
   return (
-    <div className="news-table">
+    <div className="post-table">
       <div className="flex flex-col gap-10">
-        <Table dataSource={data} columns={columns} />
+        <Table
+          dataSource={data.list}
+          columns={columns}
+          loading={data ? false : true}
+          pagination={{
+            defaultCurrent: 1,
+            showQuickJumper: true,
+            showSizeChanger: true,
+            onChange: async (page, pageSize) => {
+              await onLoadData({ page, pageSize });
+            },
+            onShowSizeChange: async (current, size) => {
+              await onLoadData({ current, size });
+            },
+            total: data?.total,
+            showTotal: (result) => `Total ${result} items`,
+          }}
+          scroll={{
+            x: "max-content",
+            y: "calc(100vh - 320px)",
+          }}
+        />
       </div>
     </div>
   );
 }
 
-export default NewsTable;
+export default PostTable;

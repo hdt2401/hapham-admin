@@ -12,9 +12,9 @@ import Placeholder from "@tiptap/extension-placeholder";
 import MenuBar from "./MenuBar.jsx";
 import ImageModal from "../Modals/ImageModal.jsx";
 import ImageResize from "tiptap-extension-resize-image";
-import { useTitle } from "../../../../components/Title";
+import { useTitle } from "../../../../components/Title/index.jsx";
 import "../../styles.scss";
-import { MODE } from "../../index.jsx";
+import { MODE } from "../../../../utils/constant.js";
 
 const extensions = [
   Underline,
@@ -43,19 +43,19 @@ const extensions = [
   }),
 ];
 
-export default function NewsDetail({ newsMode, title, onSubmit, detail }) {
-  useTitle(newsMode == MODE.create ? "News detail" : detail.title);
+export default function PostDetail({ postMode, title, onSubmit, detail }) {
+  useTitle(postMode == MODE.create ? "Post detail" : detail.title);
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const editor = useEditor({
     extensions: extensions,
-    content: newsMode == MODE.create ? "" : detail.content,
+    content: postMode == MODE.create ? "" : detail.content,
   });
 
   const defaultValues = {
-    title: newsMode == MODE.create ? "" : detail.title,
-    subTitle: newsMode == MODE.create ? "" : detail.subTitle,
+    title: postMode == MODE.create ? "" : detail.title,
+    subTitle: postMode == MODE.create ? "" : detail.subTitle,
   };
 
   const setImage = useCallback(
@@ -95,7 +95,7 @@ export default function NewsDetail({ newsMode, title, onSubmit, detail }) {
 
   return (
     <>
-      <div className="create-news">
+      <div className="create-post">
         <Button onClick={handleFinish} loading={loading}>
           Submit
         </Button>
@@ -138,7 +138,7 @@ export default function NewsDetail({ newsMode, title, onSubmit, detail }) {
         </Form>
         <ImageModal isOpen={open} handleOpen={handleOpen} setImage={setImage} />
         <MenuBar editor={editor} openModalImage={() => handleOpen()} />
-        <EditorContent editor={editor} className="news-editor" />
+        <EditorContent editor={editor} className="post-editor" />
       </div>
     </>
   );
