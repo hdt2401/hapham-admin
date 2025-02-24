@@ -1,21 +1,32 @@
 import React from "react";
 import { Table, Tag, Popconfirm, Tooltip, Space } from "antd";
 import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
-import { useTitle } from "../../../../components/Title/index.jsx";
 
-function TTable({ onNavigate, data, onDelete, onLoadData }) {
-  useTitle("Post");
-
-  const columns = [
+function MainTable({
+  onEdit,
+  data,
+  onDelete,
+  params,
+  onTableParamsChange,
+  columns
+}) {
+  const { pagination } = params;
+  const columnsTable = [
     {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
+      title: "Index",
+      dataIndex: "index",
+      key: "index",
+      width: 100,
+      render: (_, __, index) =>
+        (pagination.page - 1) * pagination.pageSize + index + 1,
     },
+    ...columns,
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
+      width: 100,
       render: (src) => (
         <Tag
           color={
@@ -29,12 +40,14 @@ function TTable({ onNavigate, data, onDelete, onLoadData }) {
     {
       title: "Action",
       key: "action",
+      align: "center",
+      width: 100,
       render: (_, record) => (
         <Space size={"large"}>
           <Tooltip title="Edit" trigger={["hover"]}>
             <EditTwoTone
               style={{ fontSize: "20px" }}
-              onClick={() => onNavigate(record)}
+              onClick={() => onEdit(record)}
             />
           </Tooltip>
           <Tooltip title="Delete" trigger={["hover"]}>
@@ -77,18 +90,28 @@ function TTable({ onNavigate, data, onDelete, onLoadData }) {
     <div className="post-table">
       <div className="flex flex-col gap-10">
         <Table
-          dataSource={data.list}
-          columns={columns}
+          dataSource={data?.list}
+          columns={columnsTable}
           loading={data ? false : true}
           pagination={{
-            defaultCurrent: 1,
+            defaultCurrent: pagination?.page,
             showQuickJumper: true,
             showSizeChanger: true,
             onChange: async (page, pageSize) => {
-              await onLoadData({ page, pageSize });
+              onTableParamsChange({
+                pagination: {
+                  page: page,
+                  pageSize: pageSize,
+                },
+              });
             },
             onShowSizeChange: async (current, size) => {
-              await onLoadData({ current, size });
+              onTableParamsChange({
+                pagination: {
+                  page: current,
+                  pageSize: size,
+                },
+              });
             },
             total: data?.total,
             showTotal: (result) => `Total ${result} items`,
@@ -103,4 +126,4 @@ function TTable({ onNavigate, data, onDelete, onLoadData }) {
   );
 }
 
-export default TTable;
+export default MainTable;

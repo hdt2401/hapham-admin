@@ -5,11 +5,9 @@ import { useToast } from "../../components/Toast/index.jsx";
 import PostService from "../../services/post.ts";
 import { useTitle } from "../../components/Title/index.jsx";
 import "./styles.scss";
-// import PostTable from "./components/PostTable/index.js";
-// import PostDetail from "./components/PostDetail/index.js";
-import PostTable from "./components/PostTable/index.jsx";
 import PostDetail from "./components/PostDetail/index.jsx";
 import { MODE } from "../../utils/constant.js";
+import MainTable from "../../components/Table/index.jsx";
 
 export default function Post() {
   useTitle("Post");
@@ -26,13 +24,19 @@ export default function Post() {
     },
   });
 
+  const columns = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+    }
+  ]
+
   useEffect(() => {
     postListFetch(tableParams.pagination);
-    console.log("first");
   }, [tableParams.pagination?.page, tableParams.pagination?.pageSize]);
 
   const postListFetch = async ({ page, pageSize }) => {
-    console.log("second");
     try {
       startLoading();
       const res = await PostService.getPostList({ page, pageSize });
@@ -109,11 +113,12 @@ export default function Post() {
           >
             Add new post
           </Button>
-          <PostTable
-            onNavigate={navigateToDetail}
+          <MainTable
             data={postList}
-            onDelete={handleDelete}
+            columns={columns}
             params={tableParams}
+            onEdit={navigateToDetail}
+            onDelete={handleDelete}
             onTableParamsChange={setTableParams}
           />
         </div>
