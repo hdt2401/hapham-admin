@@ -1,27 +1,12 @@
-import React, { useEffect, useState } from "react";
-import PostService from "../../../../services/post.ts";
-import { Button, Table, Image, Tag, Popconfirm, Tooltip, Space } from "antd";
+import React from "react";
+import { Table, Tag, Popconfirm, Tooltip, Space } from "antd";
 import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
-import { useLoading } from "../../../../components/Loading/index.jsx";
 import { useTitle } from "../../../../components/Title/index.jsx";
 
-function PostTable({
-  onNavigate,
-  data,
-  onDelete,
-  params,
-  onTableParamsChange,
-}) {
+function TTable({ onNavigate, data, onDelete, onLoadData }) {
   useTitle("Post");
-  const { pagination } = params;
+
   const columns = [
-    {
-      title: "Index",
-      dataIndex: "index",
-      key: "index",
-      render: (_, __, index) =>
-        (pagination.page - 1) * pagination.pageSize + index + 1,
-    },
     {
       title: "Title",
       dataIndex: "title",
@@ -96,24 +81,14 @@ function PostTable({
           columns={columns}
           loading={data ? false : true}
           pagination={{
-            defaultCurrent: pagination.page,
+            defaultCurrent: 1,
             showQuickJumper: true,
             showSizeChanger: true,
             onChange: async (page, pageSize) => {
-              onTableParamsChange({
-                pagination: {
-                  page: page,
-                  pageSize: pageSize,
-                },
-              });
+              await onLoadData({ page, pageSize });
             },
             onShowSizeChange: async (current, size) => {
-              onTableParamsChange({
-                pagination: {
-                  page: current,
-                  pageSize: size,
-                },
-              });
+              await onLoadData({ current, size });
             },
             total: data?.total,
             showTotal: (result) => `Total ${result} items`,
@@ -128,4 +103,4 @@ function PostTable({
   );
 }
 
-export default PostTable;
+export default TTable;

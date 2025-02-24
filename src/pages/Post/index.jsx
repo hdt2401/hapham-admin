@@ -28,9 +28,11 @@ export default function Post() {
 
   useEffect(() => {
     postListFetch(tableParams.pagination);
+    console.log("first");
   }, [tableParams.pagination?.page, tableParams.pagination?.pageSize]);
 
   const postListFetch = async ({ page, pageSize }) => {
+    console.log("second");
     try {
       startLoading();
       const res = await PostService.getPostList({ page, pageSize });
@@ -111,7 +113,8 @@ export default function Post() {
             onNavigate={navigateToDetail}
             data={postList}
             onDelete={handleDelete}
-            onLoadData={postListFetch}
+            params={tableParams}
+            onTableParamsChange={setTableParams}
           />
         </div>
       ) : (
