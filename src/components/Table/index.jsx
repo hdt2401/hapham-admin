@@ -97,7 +97,7 @@ function MainTable({
             defaultCurrent: pagination?.page,
             showQuickJumper: true,
             showSizeChanger: true,
-            onChange: async (page, pageSize) => {
+            onChange: (page, pageSize) => {
               onTableParamsChange({
                 pagination: {
                   page: page,
@@ -105,7 +105,7 @@ function MainTable({
                 },
               });
             },
-            onShowSizeChange: async (current, size) => {
+            onShowSizeChange: (current, size) => {
               onTableParamsChange({
                 pagination: {
                   page: current,

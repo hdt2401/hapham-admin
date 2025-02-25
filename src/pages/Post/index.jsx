@@ -16,7 +16,7 @@ export default function Post() {
   const { openToast } = useToast();
   const [mode, setMode] = useState(MODE.list);
   const [dataDetail, setDataDetail] = useState();
-  const [postList, setPostList] = useState([]);
+  const [dataFetching, setDataFetching] = useState();
   const [tableParams, setTableParams] = useState({
     pagination: {
       page: 1,
@@ -48,13 +48,13 @@ export default function Post() {
           status: e.status,
         };
       });
-      const postList = {
+      const dataFetching = {
         list,
         total: data.totalPosts,
         totalPages: data.totalPages,
         currentPage: data.currentPage,
       }
-      setPostList(postList);
+      setDataFetching(dataFetching);
     } catch (error) {
       openToast("error", error.message);
     } finally {
@@ -97,7 +97,17 @@ export default function Post() {
     try {
       await PostService.deletePost(id);
       openToast("success", "Post deleted successfully");
-      postListFetch(tableParams.pagination);
+      if (dataFetching.list.length === 1 && tableParams.pagination.page > 0) {
+        console.log(tableParams.pagination.page - 1);
+        setTableParams({
+          pagination: {
+            page: tableParams.pagination.page - 1,
+            pageSize: tableParams.pagination.pageSize,
+          },
+        });
+      } else {
+        postListFetch(tableParams.pagination);
+      }
     } catch (error) {
       openToast("error", error.message);
     }
@@ -114,7 +124,7 @@ export default function Post() {
             Add new post
           </Button>
           <MainTable
-            data={postList}
+            data={dataFetching}
             columns={columns}
             params={tableParams}
             onEdit={navigateToDetail}

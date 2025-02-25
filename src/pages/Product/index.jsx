@@ -128,7 +128,17 @@ export default function Product() {
   const handleDeleteProduct = async (id) => {
     try {
       await ProductService.deleteProduct(id);
-      productListFetch(tableParams.pagination);
+      if (dataFetching.list.length === 1 && tableParams.pagination.page > 0) {
+        console.log(tableParams.pagination.page - 1);
+        setTableParams({
+          pagination: {
+            page: tableParams.pagination.page - 1,
+            pageSize: tableParams.pagination.pageSize,
+          },
+        });
+      } else {
+        productListFetch(tableParams.pagination);
+      }
     } catch (error) {
       openToast("error", error);
     }
