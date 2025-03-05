@@ -12,36 +12,47 @@ import {
 import { useLoading } from "../../../components/Loading";
 import { useToast } from "../../../components/Toast";
 import { useTitle } from "../../../components/Title/index.jsx";
+import MainTable from "../../../components/Table/index.jsx";
 
-function CertificateTable() {
+function Certificate() {
   useTitle("Certificate");
-  const [certificateList, setCertificateList] = useState([]);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const { startLoading, stopLoading } = useLoading();
   const { openToast } = useToast();
   const [dataDetail, setDataDetail] = useState();
+  const [dataFetching, setDataFetching] = useState();
+  const [tableParams, setTableParams] = useState({
+    pagination: {
+      page: 1,
+      pageSize: 10,
+    },
+  });
 
   useEffect(() => {
-    certificateListFetch();
-  }, []);
+    certificateListFetch(tableParams.pagination);
+  }, [tableParams.pagination?.page, tableParams.pagination?.pageSize]);
 
-  const certificateListFetch = async () => {
+  const certificateListFetch = async ({ page, pageSize }) => {
     try {
       startLoading();
-      const res = await CertificateService.getCertificateList();
-      if (res) {
-        const list = [...res.data.data].map((e) => {
-          return {
-            id: e._id,
-            title: e.title,
-            date: e.date,
-            image: e.image,
-            status: e.status,
-          };
-        });
-        setCertificateList(list);
-      }
+      const res = await CertificateService.getCertificateList({ page, pageSize });
+      const data = res.data.data;
+      const list = [...data.list].map((e) => {
+        return {
+          id: e._id,
+          title: e.title,
+          date: e.date,
+          image: e.image,
+          status: e.status,
+        };
+      });
+      setDataFetching({
+        list,
+        total: data.totalElements,
+        totalPages: data.totalPages,
+        currentPage: data.currentPage,
+      });
     } catch (error) {
     } finally {
       stopLoading();
@@ -66,69 +77,13 @@ function CertificateTable() {
       dataIndex: "date",
       key: "date",
     },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (src) => (
-        <Tag
-          color={src === "active" ? "green" : src === "inactive" ? "red" : "null"}
-        >
-          {src}
-        </Tag>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size={"large"}>
-          <Tooltip title="Edit" trigger={["hover"]}>
-            <EditTwoTone
-              style={{ fontSize: "20px" }}
-              onClick={() => onOpenUpdateModal(record)}
-            />
-          </Tooltip>
-          <Tooltip title="Delete" trigger={["hover"]}>
-            <Popconfirm
-              title={`Do you want to delete certificate ${record.title}?`}
-              onConfirm={() => handleDeleteCertificate(record.id)}
-              okText="Delete"
-              cancelText="Cancel"
-            >
-              <DeleteTwoTone
-                style={{ fontSize: "20px" }}
-                twoToneColor="ff4d4f"
-              />
-            </Popconfirm>
-          </Tooltip>
-          {/* <Tooltip
-            title={record.status === "active" ? "Inactive" : "Active"}
-            trigger={["hover"]}
-          >
-            {record.status === "active" ? (
-              <LockTwoTone
-                style={{ fontSize: "20px" }}
-                onClick={() => console.log(record)}
-                twoToneColor="#f5222d"
-              />
-            ) : (
-              <UnlockTwoTone
-                style={{ fontSize: "20px" }}
-                onClick={() => console.log(record)}
-                twoToneColor="#52c41a"
-              />
-            )}
-          </Tooltip> */}
-        </Space>
-      ),
-    },
   ];
 
   const onOpenCreateModal = () => {
     setOpenCreateModal(!openCreateModal);
   };
   const onOpenUpdateModal = async (record) => {
+    console.log(record)
     if (openUpdateModal) {
       setOpenUpdateModal(!openUpdateModal);
     } else {
@@ -190,10 +145,17 @@ function CertificateTable() {
         Add new certificate
       </Button>
       <div className="flex flex-col gap-10">
-        <Table dataSource={certificateList} columns={columns} />
+        <MainTable
+          columns={columns}
+          data={dataFetching}
+          params={tableParams}
+          onEdit={onOpenUpdateModal}
+          onDelete={handleDeleteCertificate}
+          onTableParamsChange={setTableParams}
+        />
       </div>
     </div>
   );
 }
 
-export default CertificateTable;
+export default Certificate;
