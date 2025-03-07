@@ -13,6 +13,7 @@ import { useLoading } from "../../../components/Loading";
 import { useToast } from "../../../components/Toast";
 import { useTitle } from "../../../components/Title/index.jsx";
 import MainTable from "../../../components/Table/index.jsx";
+import dayjs from "dayjs";
 
 function Certificate() {
   useTitle("Certificate");
@@ -42,7 +43,7 @@ function Certificate() {
         return {
           id: e._id,
           title: e.title,
-          date: e.date,
+          date: dayjs(e.date).format("DD/MM/YYYY"),
           image: e.image,
           status: e.status,
         };

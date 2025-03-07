@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase/firebaseConfig";
+import dayjs from "dayjs";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -33,6 +34,7 @@ export default function UpdateCertificate({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [checkImage, setCheckImage] = useState(false);
+  console.log(dataDetail);
   useEffect(() => {
     setFile([
       {
@@ -120,7 +122,10 @@ export default function UpdateCertificate({
           <Form
             form={form}
             name="updateCertificateForm"
-            initialValues={dataDetail}
+            initialValues={{
+              ...dataDetail,
+              date: dayjs(dataDetail.date).valueOf(),
+            }}
             onFinish={handleSubmit}
             clearOnDestroy
             labelCol={{
@@ -155,6 +160,10 @@ export default function UpdateCertificate({
               message: "Date is required!",
             },
           ]}
+          getValueProps={(value) => ({
+            value: value && dayjs(Number(value)),
+          })}
+          normalize={(value) => value && `${dayjs(value).valueOf()}`}
         >
           <DatePicker />
         </Form.Item>
