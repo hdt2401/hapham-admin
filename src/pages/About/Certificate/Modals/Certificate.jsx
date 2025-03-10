@@ -12,16 +12,19 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-export default function CreateCertificate({
+export default function Certificate({
   isOpen,
-  handleOpenModal,
+  handleCancel,
   onCreate,
+  mode,
+  dataDetail
 }) {
-  const defaultValues = {
-    title: "",
-    date: "",
-    image: null,
-  };
+  console.log(mode, isOpen)
+  // const defaultValues = {
+  //   title: "",
+  //   date: "",
+  //   image: null,
+  // };
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
@@ -77,7 +80,7 @@ export default function CreateCertificate({
       <Modal
         title="Create certificate"
         open={isOpen}
-        onCancel={handleOpenModal}
+        onCancel={() => handleCancel(false)}
         okButtonProps={{
           autoFocus: true,
           htmlType: "submit",
@@ -90,7 +93,7 @@ export default function CreateCertificate({
           <Form
             form={form}
             name="createCertificateForm"
-            initialValues={defaultValues}
+            initialValues={dataDetail}
             onFinish={handleSubmit}
             clearOnDestroy
             labelCol={{

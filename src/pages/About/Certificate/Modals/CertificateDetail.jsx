@@ -22,11 +22,12 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-export default function UpdateCertificate({
+export default function CertificateDetail({
+  mode,
   isOpen,
-  handleOpenModal,
   onUpdate,
   dataDetail,
+  handleCancel,
 }) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -34,7 +35,7 @@ export default function UpdateCertificate({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [checkImage, setCheckImage] = useState(false);
-  console.log(dataDetail);
+  
   useEffect(() => {
     setFile([
       {
@@ -109,7 +110,7 @@ export default function UpdateCertificate({
       <Modal
         title="Update certificate"
         open={isOpen}
-        onCancel={handleOpenModal}
+        onCancel={() => handleCancel(false)}
         okButtonProps={{
           autoFocus: true,
           htmlType: "submit",
@@ -124,7 +125,7 @@ export default function UpdateCertificate({
             name="updateCertificateForm"
             initialValues={{
               ...dataDetail,
-              date: dayjs(dataDetail.date).valueOf(),
+              date: dayjs(dataDetail?.date).valueOf(),
             }}
             onFinish={handleSubmit}
             clearOnDestroy

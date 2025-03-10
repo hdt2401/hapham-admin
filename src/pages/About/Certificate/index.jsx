@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CertificateService from "../../../services/about/certificate.ts";
-import CreateCertificate from "./Modals/CreateCertificate.jsx";
-import UpdateCertificate from "./Modals/UpdateCertificate.jsx";
+import CertificateDetail from "./Modals/CertificateDetail.jsx";
 import { Button, Table, Image, Tag, Popconfirm, Tooltip, Space } from "antd";
 import {
   EditTwoTone,
@@ -17,12 +16,12 @@ import dayjs from "dayjs";
 
 function Certificate() {
   useTitle("Certificate");
-  const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const { startLoading, stopLoading } = useLoading();
   const { openToast } = useToast();
   const [dataDetail, setDataDetail] = useState();
   const [dataFetching, setDataFetching] = useState();
+  const [modeModal, setModeModal] = useState();
   const [tableParams, setTableParams] = useState({
     pagination: {
       page: 1,
@@ -80,23 +79,17 @@ function Certificate() {
     },
   ];
 
-  const onOpenCreateModal = () => {
-    setOpenCreateModal(!openCreateModal);
-  };
-  const onOpenUpdateModal = async (record) => {
-    console.log(record)
-    if (openUpdateModal) {
-      setOpenUpdateModal(!openUpdateModal);
-    } else {
-      setDataDetail(record);
-      setOpenUpdateModal(!openUpdateModal);
+  const onOpenModal = (mode) => {
+    if(mode) {
+      setModeModal(mode);
     }
+    setOpenModal(true);
   };
 
   const handleCreateCertificate = async (data) => {
     try {
       const result = await CertificateService.createCertificate(data);
-      setOpenCreateModal(false);
+      setOpenModal(false);
       if (result) {
         openToast("success", "Thành công");
       }
@@ -110,7 +103,7 @@ function Certificate() {
   const handleUpdateCertificate = async (id, data) => {
     try {
       const result = await CertificateService.updateCertificate(id, data);
-      setOpenUpdateModal(false);
+      setOpenModal(false);
       if (result) {
         openToast("success", "Thành công");
       }
@@ -128,21 +121,27 @@ function Certificate() {
       openToast("error", error);
     }
   };
-
+  const handleEdit = (data) => {
+    setDataDetail(data);
+    onOpenModal("UPDATE");
+  }
   return (
     <div className="certificate-table">
-      <CreateCertificate
-        isOpen={openCreateModal}
-        handleOpenModal={onOpenCreateModal}
+      <CertificateDetail
+        mode={modeModal}
+        isOpen={openModal}
+        dataDetail={dataDetail}
+        handleCancel={setOpenModal}
         onCreate={handleCreateCertificate}
+        onUpdate={handleUpdateCertificate}
       />
-      <UpdateCertificate
-        isOpen={openUpdateModal}
+      {/* <UpdateCertificate
+        isOpen={openModal}
         handleOpenModal={onOpenUpdateModal}
         onUpdate={handleUpdateCertificate}
         dataDetail={dataDetail}
-      />
-      <Button style={{ marginBottom: "2rem" }} onClick={onOpenCreateModal}>
+      /> */}
+      <Button style={{ marginBottom: "2rem" }} onClick={() => onOpenModal("CREATE")}>
         Add new certificate
       </Button>
       <div className="flex flex-col gap-10">
@@ -150,7 +149,7 @@ function Certificate() {
           columns={columns}
           data={dataFetching}
           params={tableParams}
-          onEdit={onOpenUpdateModal}
+          onEdit={handleEdit}
           onDelete={handleDeleteCertificate}
           onTableParamsChange={setTableParams}
         />
