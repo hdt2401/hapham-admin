@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://localhost:3001/v1/api/about/certificate";
+const API_URL = "http://localhost:3001/v1/api/certificate";
 
 const createCertificate = async (data:object) => {
   return await axios.post(API_URL, data);

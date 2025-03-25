@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import LeaderService from "../../../services/about/leader.ts";
+import LeaderService from "../../../services/leader.ts";
 import CreateLeader from "./Modals/CreateLeader.jsx";
 import UpdateLeader from "./Modals/UpdateLeader.jsx";
 import { Button, Table, Image, Tag, Popconfirm, Tooltip, Space } from "antd";

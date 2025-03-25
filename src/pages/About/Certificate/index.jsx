@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CertificateService from "../../../services/about/certificate.ts";
+import CertificateService from "../../../services/certificate.ts";
 import CertificateDetail from "./Modals/CertificateDetail.jsx";
 import { Button, Table, Image, Tag, Popconfirm, Tooltip, Space } from "antd";
 import {
@@ -135,12 +135,6 @@ function Certificate() {
         onCreate={handleCreateCertificate}
         onUpdate={handleUpdateCertificate}
       />
-      {/* <UpdateCertificate
-        isOpen={openModal}
-        handleOpenModal={onOpenUpdateModal}
-        onUpdate={handleUpdateCertificate}
-        dataDetail={dataDetail}
-      /> */}
       <Button style={{ marginBottom: "2rem" }} onClick={() => onOpenModal("CREATE")}>
         Add new certificate
       </Button>

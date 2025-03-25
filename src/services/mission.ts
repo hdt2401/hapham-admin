@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://localhost:3001/v1/api/about/";
+const API_URL = "http://localhost:3001/v1/api/";
 
 const createMission = async (data:object) => {
   return await axios.post(API_URL + "mission/", data);
