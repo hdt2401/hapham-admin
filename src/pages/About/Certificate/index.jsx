@@ -42,7 +42,7 @@ function Certificate() {
         return {
           id: e._id,
           title: e.title,
-          date: dayjs(e.date).format("DD/MM/YYYY"),
+          date: e.date,
           image: e.image,
           status: e.status,
         };
@@ -94,7 +94,7 @@ function Certificate() {
         openToast("success", "Thành công");
       }
       console.log(result);
-      certificateListFetch();
+      certificateListFetch(tableParams.pagination);
     } catch (error) {
       openToast("error", error);
     }
@@ -107,7 +107,7 @@ function Certificate() {
       if (result) {
         openToast("success", "Thành công");
       }
-      certificateListFetch();
+      certificateListFetch(tableParams.pagination);
     } catch (error) {
       openToast("error", error);
     }
@@ -116,7 +116,17 @@ function Certificate() {
   const handleDeleteCertificate = async (id) => {
     try {
       await CertificateService.deleteCertificate(id);
-      certificateListFetch();
+      certificateListFetch(tableParams.pagination);
+      if (dataFetching.list.length === 1 && tableParams.pagination.page > 0) {
+        setTableParams({
+          pagination: {
+            page: tableParams.pagination.page - 1,
+            pageSize: tableParams.pagination.pageSize,
+          },
+        });
+      } else {
+        certificateListFetch(tableParams.pagination);
+      }
     } catch (error) {
       openToast("error", error);
     }

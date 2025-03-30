@@ -12,8 +12,7 @@ import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase/firebaseConfig";
-import dayjs from "dayjs";
-
+import dayjs from 'dayjs';
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -25,28 +24,38 @@ const getBase64 = (file) =>
 export default function CertificateDetail({
   mode,
   isOpen,
+  onCreate,
   onUpdate,
   dataDetail,
   handleCancel,
 }) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [initialValues, setInitialValues] = useState({});
   const [file, setFile] = useState([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [checkImage, setCheckImage] = useState(false);
-  
+
   useEffect(() => {
-    setFile([
-      {
-        uid: dataDetail?.id,
-        name: decodeURIComponent(dataDetail?.image)
-          .substring(decodeURIComponent(dataDetail?.image).lastIndexOf("/") + 1)
-          .split("?")[0],
-        status: "done",
-        url: dataDetail?.image,
-      },
-    ]);
+    if (mode === "UPDATE") {
+      setInitialValues({ ...dataDetail, date: dayjs(dataDetail?.date) });
+      setFile([
+        {
+          uid: dataDetail?.id,
+          name: decodeURIComponent(dataDetail?.image)
+            .substring(
+              decodeURIComponent(dataDetail?.image).lastIndexOf("/") + 1
+            )
+            .split("?")[0],
+          status: "done",
+          url: dataDetail?.image,
+        },
+      ]);
+    } else {
+      setInitialValues({});
+      setFile([]);
+    }
   }, [dataDetail, isOpen]);
 
   useEffect(() => {
@@ -74,41 +83,46 @@ export default function CertificateDetail({
   };
 
   const handleSubmit = async (data) => {
-    if (file?.length > 0 && file[0].originFileObj) {
-      setLoading(true);
-      const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
-      const uploadTask = uploadBytesResumable(
-        storageRef,
-        file[0].originFileObj
-      );
-      let downloadURL;
-      uploadTask.on(
-        "state_changed",
-        (error) => {
-          console.error("Upload error: ", error);
-        },
-        (snapshot) => {},
-        async () => {
-          try {
-            downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            await onUpdate(dataDetail.id, { ...data, image: downloadURL });
-          } catch (error) {
-          } finally {
-            setLoading(false);
-          }
-        }
-      );
+    if (mode === "CREATE") {
+      onCreate(data);
     } else {
-      setLoading(true);
-      await onUpdate(dataDetail.id, data);
-      setLoading(false);
+      onUpdate(dataDetail.id, data);
     }
+    // if (file?.length > 0 && file[0].originFileObj) {
+    //   setLoading(true);
+    //   const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
+    //   const uploadTask = uploadBytesResumable(
+    //     storageRef,
+    //     file[0].originFileObj
+    //   );
+    //   let downloadURL;
+    //   uploadTask.on(
+    //     "state_changed",
+    //     (error) => {
+    //       console.error("Upload error: ", error);
+    //     },
+    //     (snapshot) => {},
+    //     async () => {
+    //       try {
+    //         downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+    //         await onUpdate(dataDetail.id, { ...data, image: downloadURL });
+    //       } catch (error) {
+    //       } finally {
+    //         setLoading(false);
+    //       }
+    //     }
+    //   );
+    // } else {
+    //   setLoading(true);
+    //   await onUpdate(dataDetail.id, data);
+    //   setLoading(false);
+    // }
   };
-
+  
   return (
     <>
       <Modal
-        title="Update certificate"
+        title={mode === "CREATE" ? "Create Certificate" : `Update Certificate: ${dataDetail?.title}`}
         open={isOpen}
         onCancel={() => handleCancel(false)}
         okButtonProps={{
@@ -123,10 +137,7 @@ export default function CertificateDetail({
           <Form
             form={form}
             name="updateCertificateForm"
-            initialValues={{
-              ...dataDetail,
-              date: dayjs(dataDetail?.date).valueOf(),
-            }}
+            initialValues={initialValues}
             onFinish={handleSubmit}
             clearOnDestroy
             labelCol={{
@@ -161,10 +172,6 @@ export default function CertificateDetail({
               message: "Date is required!",
             },
           ]}
-          getValueProps={(value) => ({
-            value: value && dayjs(Number(value)),
-          })}
-          normalize={(value) => value && `${dayjs(value).valueOf()}`}
         >
           <DatePicker />
         </Form.Item>
@@ -180,27 +187,14 @@ export default function CertificateDetail({
                 label: "Inactive",
               },
             ]}
+            defaultValue={"active"}
           />
         </Form.Item>
         <Form.Item
           label="Image"
           name="image"
-          valuePropName="fileList" // Synchronize fileList with form
-          getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)} // Ensure proper file handling
-          rules={[
-            {
-              required: true,
-              message: "Please upload an image!",
-            },
-            () => ({
-              validator(_, value) {
-                if (file && file.length > 0) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error("You must upload an image!"));
-              },
-            }),
-          ]}
+          valuePropName="fileList"
+          getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
         >
           <Upload {...propsUpload} fileList={file}>
             <Button>
