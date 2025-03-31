@@ -31,11 +31,10 @@ export default function Product() {
       const list = [...data.products].map((e) => {
         return {
           id: e._id,
-          title: e.title,
-          subTitle: e.subTitle,
+          name: e.name,
           description: e.description,
           image: e.image,
-          price: e.price,
+          keyword: e.keyword,
           status: e.status,
         };
       });
@@ -57,32 +56,27 @@ export default function Product() {
 
   const columns = [
     {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
+      title: "Tên dịch vụ",
+      dataIndex: ["name", "vi"],
+      key: "name",
     },
+    // {
+    //   title: "Mô tả dịch vụ",
+    //   dataIndex: ["description", "vi"],
+    //   key: "description",
+    // },
     {
-      title: "Sub-Title",
-      dataIndex: "subTitle",
-      key: "subTitle",
-    },
-    {
-      title: "Image",
+      title: "Hình ảnh",
       dataIndex: "image",
       key: "image",
       width: 240,
       render: (src) => <Image src={src} alt="image" width={200} />,
     },
     {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
+      title: "Từ khoá",
+      dataIndex: "keyword",
+      key: "keyword",
     },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    }
   ];
 
   const onOpenCreateModal = () => {
@@ -158,7 +152,7 @@ export default function Product() {
         dataDetail={dataDetail}
       />
       <Button style={{ marginBottom: "2rem" }} onClick={onOpenCreateModal}>
-        Add new product
+        Thêm mới dịch vụ{" "}
       </Button>
       <div className="flex flex-col gap-10">
         <MainTable

@@ -82,41 +82,44 @@ export default function CertificateDetail({
     },
   };
 
-  const handleSubmit = async (data) => {
+  const handleApi = async (data, url) => {
     if (mode === "CREATE") {
-      onCreate(data);
+      await onCreate({ ...data, image: url });
     } else {
-      onUpdate(dataDetail.id, data);
+      await onUpdate(dataDetail.id, { ...data, image: url });
     }
-    // if (file?.length > 0 && file[0].originFileObj) {
-    //   setLoading(true);
-    //   const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
-    //   const uploadTask = uploadBytesResumable(
-    //     storageRef,
-    //     file[0].originFileObj
-    //   );
-    //   let downloadURL;
-    //   uploadTask.on(
-    //     "state_changed",
-    //     (error) => {
-    //       console.error("Upload error: ", error);
-    //     },
-    //     (snapshot) => {},
-    //     async () => {
-    //       try {
-    //         downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-    //         await onUpdate(dataDetail.id, { ...data, image: downloadURL });
-    //       } catch (error) {
-    //       } finally {
-    //         setLoading(false);
-    //       }
-    //     }
-    //   );
-    // } else {
-    //   setLoading(true);
-    //   await onUpdate(dataDetail.id, data);
-    //   setLoading(false);
-    // }
+  }
+
+  const handleSubmit = async (data) => {
+    if (file?.length > 0 && file[0].originFileObj) {
+      setLoading(true);
+      const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
+      const uploadTask = uploadBytesResumable(
+        storageRef,
+        file[0].originFileObj
+      );
+      let downloadURL;
+      uploadTask.on(
+        "state_changed",
+        (error) => {
+          console.error("Upload error: ", error);
+        },
+        (snapshot) => {},
+        async () => {
+          try {
+            downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            await handleApi(data, downloadURL);
+          } catch (error) {
+          } finally {
+            setLoading(false);
+          }
+        }
+      );
+    } else {
+      setLoading(true);
+      await handleApi(data);
+      setLoading(false);
+    }
   };
   
   return (

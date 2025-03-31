@@ -20,10 +20,15 @@ const getBase64 = (file) =>
 
 export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
   const defaultValues = {
-    title: "",
-    subTitle: "",
-    price: "",
-    description: "",
+    name: {
+      vi: "",
+      en: ""
+    },
+    description: {
+      vi: "",
+      en: ""
+    },
+    keyword: "",
     image: null,
   };
   const [form] = Form.useForm();
@@ -53,6 +58,7 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
   };
 
   const handleSubmit = async (data) => {
+    console.log(data)
     const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file[0].originFileObj);
     setLoading(true);
@@ -79,7 +85,7 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
   return (
     <>
       <Modal
-        title="Create product"
+        title="Thêm mới dịch vụ"
         open={isOpen}
         onCancel={handleOpenModal}
         okButtonProps={{
@@ -98,10 +104,10 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
             onFinish={handleSubmit}
             clearOnDestroy
             labelCol={{
-              span: 6,
+              span: 8,
             }}
             wrapperCol={{
-              span: 18,
+              span: 16,
             }}
           >
             {dom}
@@ -109,35 +115,38 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
         )}
       >
         <Form.Item
-          label="Title"
-          name="title"
+          label="Tên dịch vụ (VI)"
+          name={["name", "vi"]}
           rules={[
             {
               required: true,
-              message: "Title is required!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item label="Sub-Title" name="subTitle">
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Price"
-          name="price"
-          rules={[
-            {
-              required: true,
-              message: "Price is required!",
+              message: "Nhập tên dịch vụ!",
             },
           ]}
         >
           <Input />
         </Form.Item>
         <Form.Item
-          label="Description"
-          name="description"
+          label="Tên dịch vụ (EN)"
+          name={["name", "en"]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Mô tả dịch vụ (VI)"
+          name={["description", "vi"]}
+          rules={[
+            {
+              required: true,
+              message: "Nhập mô tả dịch vụ!",
+            },
+          ]}
+        >
+          <TextArea />
+        </Form.Item>
+        <Form.Item
+          label="Mô tả dịch vụ (EN)"
+          name={["description", "en"]}
           rules={[
             {
               required: true,
@@ -146,6 +155,12 @@ export default function CreateProduct({ isOpen, handleOpenModal, onCreate }) {
           ]}
         >
           <TextArea />
+        </Form.Item>
+        <Form.Item
+          label="Từ khoá"
+          name="keyword"
+        >
+          <Input />
         </Form.Item>
         <Form.Item label="Image" name="image">
           <Upload {...propsUpload}>

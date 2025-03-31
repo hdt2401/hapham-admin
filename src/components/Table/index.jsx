@@ -13,7 +13,7 @@ function MainTable({
   const { pagination } = params;
   const columnsTable = [
     {
-      title: "Index",
+      title: "STT",
       dataIndex: "index",
       key: "index",
       width: 100,
@@ -22,7 +22,7 @@ function MainTable({
     },
     ...columns,
     {
-      title: "Status",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
       align: "center",
