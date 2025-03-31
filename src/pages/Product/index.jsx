@@ -28,6 +28,7 @@ export default function Product() {
       const list = [...data.products].map((e) => {
         return {
           id: e._id,
+          key: e._id,
           name: e.name,
           description: e.description,
           image: e.image,

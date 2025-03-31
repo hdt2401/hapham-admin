@@ -41,6 +41,7 @@ function Certificate() {
       const list = [...data.list].map((e) => {
         return {
           id: e._id,
+          key: e._id,
           title: e.title,
           date: e.date,
           image: e.image,

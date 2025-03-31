@@ -44,6 +44,7 @@ export default function Post() {
       const list = [...data.posts].map((e) => {
         return {
           id: e._id,
+          key: e._id,
           title: e.title,
           status: e.status,
         };

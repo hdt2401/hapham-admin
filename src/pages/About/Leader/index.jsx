@@ -34,6 +34,7 @@ function LeaderTable() {
         const list = [...res.data.data].map((e) => {
           return {
             id: e._id,
+            key: e._id,
             fullName: e.fullName,
             position: e.position,
             scholarship: e.scholarship,
@@ -78,7 +79,9 @@ function LeaderTable() {
       key: "status",
       render: (src) => (
         <Tag
-          color={src === "active" ? "green" : src === "inactive" ? "red" : "null"}
+          color={
+            src === "active" ? "green" : src === "inactive" ? "red" : "null"
+          }
         >
           {src}
         </Tag>
