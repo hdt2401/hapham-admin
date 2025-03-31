@@ -17,6 +17,7 @@ import {
 } from "@ant-design/icons";
 import { Routes, Route, NavLink, Link, useLocation } from "react-router";
 import Product from "./pages/Product";
+import ProductDetail from "./pages/Product/components/ProductDetail";
 import Post from "./pages/Post";
 import About from "./pages/About";
 import Home from "./pages/Home";
@@ -263,10 +264,13 @@ const App = () => {
           >
             <Routes>
               <Route path="" index element={<Home />} title="Home"/>
-              <Route path="/product" element={<Product />} />
+              <Route path="/product">
+                <Route index element={<Product />} />
+                <Route path=":id" element={<ProductDetail mode="UPDATE" />} />
+                <Route path="create" element={<ProductDetail mode="CREATE" />} />
+              </Route>
               <Route path="/post" element={<Post />} />
               <Route path="about" element={<About />}>
-                {/* </Route> */}
                 <Route path="certificate" element={<Certificate />} />
                 <Route path="leader" element={<Leader />} />
                 <Route path="mission" element={<Mission />} />

@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useTitle } from "../../components/Title";
 import ProductService from "../../services/product.ts";
-import CreateProduct from "./Modals/CreateProduct.jsx";
-import UpdateProduct from "./Modals/UpdateProduct.jsx";
 import { Button, Image } from "antd";
 import { useLoading } from "../../components/Loading/index.jsx";
 import { useToast } from "../../components/Toast/index.jsx";
 import MainTable from "../../components/Table/index.jsx";
+import { useNavigate } from "react-router";
 
 export default function Product() {
-  useTitle("Product");
-  const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  useTitle("Danh sách sản phẩm");
+  const navigate = useNavigate();
   const { startLoading, stopLoading } = useLoading();
   const { openToast } = useToast();
-  const [dataDetail, setDataDetail] = useState();
   const [dataFetching, setDataFetching] = useState();
   const [tableParams, setTableParams] = useState({
     pagination: {
@@ -60,11 +57,6 @@ export default function Product() {
       dataIndex: ["name", "vi"],
       key: "name",
     },
-    // {
-    //   title: "Mô tả dịch vụ",
-    //   dataIndex: ["description", "vi"],
-    //   key: "description",
-    // },
     {
       title: "Hình ảnh",
       dataIndex: "image",
@@ -78,46 +70,6 @@ export default function Product() {
       key: "keyword",
     },
   ];
-
-  const onOpenCreateModal = () => {
-    setOpenCreateModal(!openCreateModal);
-  };
-
-  const onOpenUpdateModal = async (record) => {
-    if (openUpdateModal) {
-      setOpenUpdateModal(!openUpdateModal);
-    } else {
-      setDataDetail(record);
-      setOpenUpdateModal(!openUpdateModal);
-    }
-  };
-
-  const handleCreateProduct = async (data) => {
-    try {
-      const result = await ProductService.createProduct(data);
-      setOpenCreateModal(false);
-      if (result) {
-        openToast("success", "Thành công");
-      }
-      console.log(result);
-      productListFetch(tableParams.pagination);
-    } catch (error) {
-      openToast("error", error);
-    }
-  };
-
-  const handleUpdateProduct = async (id, data) => {
-    try {
-      const result = await ProductService.updateProduct(id, data);
-      setOpenUpdateModal(false);
-      if (result) {
-        openToast("success", "Thành công");
-      }
-      productListFetch(tableParams.pagination);
-    } catch (error) {
-      openToast("error", error);
-    }
-  };
 
   const handleDeleteProduct = async (id) => {
     try {
@@ -140,28 +92,21 @@ export default function Product() {
 
   return (
     <div>
-      <CreateProduct
-        isOpen={openCreateModal}
-        handleOpenModal={onOpenCreateModal}
-        onCreate={handleCreateProduct}
-      />
-      <UpdateProduct
-        isOpen={openUpdateModal}
-        handleOpenModal={onOpenUpdateModal}
-        onUpdate={handleUpdateProduct}
-        dataDetail={dataDetail}
-      />
-      <Button style={{ marginBottom: "2rem" }} onClick={onOpenCreateModal}>
+      <Button
+        style={{ marginBottom: "2rem" }}
+        onClick={() => navigate("/product/create")}
+      >
         Thêm mới dịch vụ{" "}
       </Button>
+
       <div className="flex flex-col gap-10">
         <MainTable
           columns={columns}
           data={dataFetching}
           params={tableParams}
-          onEdit={onOpenUpdateModal}
           onDelete={handleDeleteProduct}
           onTableParamsChange={setTableParams}
+          onEdit={(record) => navigate("/product/" + record.id)}
         />
       </div>
     </div>
