@@ -21,58 +21,75 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-export default function ProductDetail({ mode, onCreate }) {
+export default function ProductDetail({ mode }) {
   useTitle(`${mode == "CREATE" ? "Thêm mới" : "Cập nhật"} sản phẩm`);
   const navigate = useNavigate();
   const { openToast } = useToast();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
+  const defaultValue = {
+    name: {
+      vi: "",
+      en: "",
+    },
+    description: {
+      vi: "",
+      en: "",
+    },
+    keyword: "",
+    status: "",
+    image: "",
+  };
+
   const { id } = useParams();
+
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const result = await ProductService.getProduct(id);
-        if (result) {
-          form.setFieldsValue({
-            name: {
-              vi: result.data.data.name.vi,
-              en: result.data.data.name.en,
-            },
-            description: {
-              vi: result.data.data.description.vi,
-              en: result.data.data.description.en,
-            },
-            keyword: result.data.data.keyword,
-            status: result.data.data.status,
-            image: result.data.data.image,
-          });
-          form.validateFields(["image"]);
-          setFile([
-            {
-              uid: result.data.data?.id,
-              name: decodeURIComponent(result.data.data?.image)
-                .substring(decodeURIComponent(result.data.data?.image).lastIndexOf("/") + 1)
-                .split("?")[0],
-              status: "done",
-              url: result.data.data?.image,
-            },
-          ]);
-        }
-      } catch (error) {
-        openToast("error", error);
-      }
-    };
     if (mode === "UPDATE") {
       fetchProduct();
     }
-  }, [id]);
+  }, []);
+
+  const fetchProduct = async () => {
+    try {
+      const result = await ProductService.getProduct(id);
+      const data = result.data.data;
+      if (result) {
+        form.setFieldsValue({
+          name: {
+            vi: data.name.vi,
+            en: data.name.en,
+          },
+          description: {
+            vi: data.description.vi,
+            en: data.description.en,
+          },
+          keyword: data.keyword,
+          status: data.status,
+          image: data.image,
+        });
+        setFile([
+          {
+            uid: data.id,
+            name: decodeURIComponent(data.image)
+              .substring(decodeURIComponent(data.image).lastIndexOf("/") + 1)
+              .split("?")[0],
+            status: "done",
+            url: data.image,
+          },
+        ]);
+        setPreviewImage(data.image);
+      }
+    } catch (error) {
+      openToast("error", error);
+    }
+  };
 
   const propsUpload = {
     maxCount: 1,
-    name: "image",
+    // name: "image",
     listType: "picture",
     accept: "image/*",
     beforeUpload: () => {
@@ -114,35 +131,58 @@ export default function ProductDetail({ mode, onCreate }) {
   };
 
   const handleSubmit = async () => {
-    const validate = await form.validateFields();
-    console.log(validate)
-    if (validate) {
-      const data = form.getFieldsValue();
-      console.log(data);
+    try {
+      await form.validateFields();
+      setLoading(true);
+      if (file.length > 0 && file[0].originFileObj) {
+        const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
+        const uploadTask = uploadBytesResumable(
+          storageRef,
+          file[0].originFileObj
+        );
+        const formValues = form.getFieldsValue();
+        uploadTask.on(
+          "state_changed",
+          (error) => {
+            console.error("Upload error: ", error);
+          },
+          (snapshot) => {},
+          async () => {
+            let downloadURL;
+            try {
+              downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              if (mode === "UPDATE") {
+                await handleUpdateProduct(id, {
+                  ...formValues,
+                  image: downloadURL,
+                });
+              } else {
+                await handleCreateProduct({
+                  ...formValues,
+                  image: downloadURL,
+                });
+              }
+            } catch (error) {
+              openToast("error", error);
+            } finally {
+              setLoading(false);
+            }
+          }
+        );
+      } else {
+        try {
+          await handleUpdateProduct(id, form.getFieldsValue());
+        } catch (error) {
+          openToast("error", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    } catch (error) {
+      openToast("error", error);
+    } finally {
+      setLoading(false);
     }
-      
-
-    // const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
-    // const uploadTask = uploadBytesResumable(storageRef, file[0].originFileObj);
-    // setLoading(true);
-    // uploadTask.on(
-    //   "state_changed",
-    //   (error) => {
-    //     console.error("Upload error: ", error);
-    //   },
-    //   (snapshot) => {},
-    //   async () => {
-    //     // Complete function
-    //     let downloadURL;
-    //     try {
-    //       downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-    //     } catch (error) {
-    //     } finally {
-    //       setLoading(false);
-    //       onCreate({ ...data, image: downloadURL, status: "active" });
-    //     }
-    //   }
-    // );
   };
 
   return (
@@ -155,15 +195,16 @@ export default function ProductDetail({ mode, onCreate }) {
         name="ProductDetailForm"
         onFinish={handleSubmit}
         clearOnDestroy
+        initialValues={mode === "CREATE" ? defaultValue : form.getFieldsValue()}
         labelCol={{
-          span: 8,
+          span: 4,
         }}
         wrapperCol={{
-          span: 16,
+          span: 20,
         }}
       >
         <Form.Item
-          label="Tên dịch vụ (VI)"
+          label="Tên (VI)"
           name={["name", "vi"]}
           rules={[
             {
@@ -174,11 +215,11 @@ export default function ProductDetail({ mode, onCreate }) {
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Tên dịch vụ (EN)" name={["name", "en"]}>
+        <Form.Item label="Tên (EN)" name={["name", "en"]}>
           <Input />
         </Form.Item>
         <Form.Item
-          label="Mô tả dịch vụ (VI)"
+          label="Mô tả (VI)"
           name={["description", "vi"]}
           rules={[
             {
@@ -189,15 +230,11 @@ export default function ProductDetail({ mode, onCreate }) {
         >
           <TextArea />
         </Form.Item>
-        <Form.Item
-          label="Mô tả dịch vụ (EN)"
-          name={["description", "en"]}
-        >
+        <Form.Item label="Mô tả (EN)" name={["description", "en"]}>
           <TextArea />
         </Form.Item>
-        <Form.Item name="status" label="Status">
+        <Form.Item label="Status" name="status">
           <Select
-            defaultValue="active"
             options={[
               {
                 value: "active",
@@ -213,8 +250,33 @@ export default function ProductDetail({ mode, onCreate }) {
         <Form.Item label="Từ khoá" name="keyword">
           <Input />
         </Form.Item>
-        <Form.Item label="Image" name="image">
-          <Upload {...propsUpload}>
+        <Form.Item
+          label="Image"
+          name="image"
+          rules={[
+            {
+              required: true,
+              message: "Please upload an image!",
+            },
+            () => ({
+              validator(_, value) {
+                if (file && file.length > 0) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("You must upload an image!"));
+              },
+            }),
+          ]}
+        >
+          <Upload
+            maxCount={1}
+            listType="picture"
+            accept="image/*"
+            fileList={file}
+            onPreview={propsUpload.onPreview}
+            onChange={propsUpload.onChange}
+            beforeUpload={propsUpload.beforeUpload}
+          >
             <Button>
               <PlusOutlined />
               Upload
@@ -235,7 +297,7 @@ export default function ProductDetail({ mode, onCreate }) {
           )}
         </Form.Item>
       </Form>
-      <Button onClick={handleSubmit} type="primary" loading={loading}>
+      <Button onClick={handleSubmit} type="primary">
         {mode == "CREATE" ? "Thêm mới" : "Cập nhật"}
       </Button>
     </div>
