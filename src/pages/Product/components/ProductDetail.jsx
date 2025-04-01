@@ -40,7 +40,7 @@ export default function ProductDetail({ mode }) {
       en: "",
     },
     keyword: "",
-    status: "",
+    status: "active",
     image: "",
   };
 
@@ -89,7 +89,7 @@ export default function ProductDetail({ mode }) {
 
   const propsUpload = {
     maxCount: 1,
-    // name: "image",
+    name: "image",
     listType: "picture",
     accept: "image/*",
     beforeUpload: () => {
@@ -105,6 +105,12 @@ export default function ProductDetail({ mode }) {
     onChange: ({ fileList: newFile }) => {
       setFile(newFile.length === 0 ? null : newFile);
     },
+  };
+
+  const resetForm = () => {
+    form.resetFields();
+    setFile([]);
+    setPreviewImage("");
   };
 
   const handleCreateProduct = async (data) => {
@@ -134,36 +140,31 @@ export default function ProductDetail({ mode }) {
     try {
       await form.validateFields();
       setLoading(true);
+      const formValues = form.getFieldsValue();
+
       if (file.length > 0 && file[0].originFileObj) {
         const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
-        const uploadTask = uploadBytesResumable(
-          storageRef,
-          file[0].originFileObj
-        );
-        const formValues = form.getFieldsValue();
+        const uploadTask = uploadBytesResumable(storageRef, file[0].originFileObj);
+
         uploadTask.on(
           "state_changed",
-          (error) => {
-            console.error("Upload error: ", error);
-          },
           (snapshot) => {},
+          (error) => {
+            openToast("error", error.message);
+          },
           async () => {
-            let downloadURL;
             try {
-              downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              const payload = { ...formValues, image: downloadURL };
+
               if (mode === "UPDATE") {
-                await handleUpdateProduct(id, {
-                  ...formValues,
-                  image: downloadURL,
-                });
+                await handleUpdateProduct(id, payload);
               } else {
-                await handleCreateProduct({
-                  ...formValues,
-                  image: downloadURL,
-                });
+                await handleCreateProduct(payload);
+                resetForm();
               }
             } catch (error) {
-              openToast("error", error);
+              openToast("error", error.message);
             } finally {
               setLoading(false);
             }
@@ -171,15 +172,20 @@ export default function ProductDetail({ mode }) {
         );
       } else {
         try {
-          await handleUpdateProduct(id, form.getFieldsValue());
+          if (mode === "UPDATE") {
+            await handleUpdateProduct(id, formValues);
+          } else {
+            await handleCreateProduct(formValues);
+            resetForm();
+          }
         } catch (error) {
-          openToast("error", error);
+          openToast("error", error.message);
         } finally {
           setLoading(false);
         }
       }
     } catch (error) {
-      openToast("error", error);
+      openToast("error", error.message);
     } finally {
       setLoading(false);
     }
@@ -235,6 +241,7 @@ export default function ProductDetail({ mode }) {
         </Form.Item>
         <Form.Item label="Status" name="status">
           <Select
+            defaultValue="active"
             options={[
               {
                 value: "active",
@@ -254,10 +261,6 @@ export default function ProductDetail({ mode }) {
           label="Image"
           name="image"
           rules={[
-            {
-              required: true,
-              message: "Please upload an image!",
-            },
             () => ({
               validator(_, value) {
                 if (file && file.length > 0) {
