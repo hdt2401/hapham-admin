@@ -12,6 +12,7 @@ import { useLoading } from "../../../components/Loading";
 import { useToast } from "../../../components/Toast";
 import { useTitle } from "../../../components/Title/index.jsx";
 import MainTable from "../../../components/Table/index.jsx";
+import { PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 function Certificate() {
@@ -62,19 +63,19 @@ function Certificate() {
 
   const columns = [
     {
-      title: "Title",
+      title: "Tên chứng chỉ",
       dataIndex: "title",
       key: "title",
     },
     {
-      title: "Image",
+      title: "Hình ảnh",
       dataIndex: "image",
       key: "image",
       width: 240,
       render: (src) => <Image src={src} alt="image" width={200} />,
     },
     {
-      title: "Date",
+      title: "Ngày cấp",
       dataIndex: "date",
       key: "date",
     },
@@ -147,7 +148,8 @@ function Certificate() {
         onUpdate={handleUpdateCertificate}
       />
       <Button style={{ marginBottom: "2rem" }} onClick={() => onOpenModal("CREATE")}>
-        Add new certificate
+        <PlusOutlined />
+        Thêm mới
       </Button>
       <div className="flex flex-col gap-10">
         <MainTable

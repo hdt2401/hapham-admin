@@ -78,20 +78,16 @@ const ImageModal = ({ isOpen, handleOpen, setImage }) => {
         onClick: handleSubmit
       }}
       destroyOnClose
-      okText="Submit"
-      cancelText="Cancel"
-      title="Upload image"
+      okText="Thêm mới"
+      cancelText="Hủy"
+      title="Chọn ảnh"
     >
       <Dragger {...props}>
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
         <p className="ant-upload-text">
-          Click or drag file to this area to upload
-        </p>
-        <p className="ant-upload-hint">
-          Support for a single or bulk upload. Strictly prohibited from
-          uploading company data or other banned files.
+          Chọn hoặc kéo thả ảnh vào đây
         </p>
       </Dragger>
       {previewImage && (

@@ -97,7 +97,7 @@ export default function PostDetail({ postMode, title, onSubmit, detail }) {
     <>
       <div className="create-post">
         <Button onClick={handleFinish} loading={loading}>
-          Submit
+          {postMode == MODE.create ? "Thêm mới" : "Cập nhật"}
         </Button>
         <Form
           form={form}
@@ -112,24 +112,24 @@ export default function PostDetail({ postMode, title, onSubmit, detail }) {
           }}
         >
           <Form.Item
-            label="Title"
+            label="Tiêu đề"
             name="title"
             rules={[
               {
                 required: true,
-                message: "Title is required!",
+                message: "Tiêu đề không được để trống!",
               },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Sub-title"
+            label="Tiêu đề phụ"
             name="subTitle"
             rules={[
               {
                 required: true,
-                message: "Sub-title is required!",
+                message: "Tiêu đề phụ không được để trống!",
               },
             ]}
           >

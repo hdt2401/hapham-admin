@@ -239,17 +239,17 @@ export default function ProductDetail({ mode }) {
         <Form.Item label="Mô tả (EN)" name={["description", "en"]}>
           <TextArea />
         </Form.Item>
-        <Form.Item label="Status" name="status">
+        <Form.Item label="Trạng thái" name="status">
           <Select
             defaultValue="active"
             options={[
               {
                 value: "active",
-                label: "Active",
+                label: "Hoạt động",
               },
               {
                 value: "inactive",
-                label: "Inactive",
+                label: "Khóa",
               },
             ]}
           />
@@ -258,7 +258,7 @@ export default function ProductDetail({ mode }) {
           <Input />
         </Form.Item>
         <Form.Item
-          label="Image"
+          label="Hình ảnh"
           name="image"
           rules={[
             () => ({
@@ -282,7 +282,7 @@ export default function ProductDetail({ mode }) {
           >
             <Button>
               <PlusOutlined />
-              Upload
+              Chọn ảnh
             </Button>
           </Upload>
           {previewImage && (

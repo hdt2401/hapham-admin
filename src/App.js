@@ -35,50 +35,50 @@ const mainMenu = [
     key: "",
     icon: <HomeOutlined />,
     // label: "Home",
-    label: <NavLink to="/">Home</NavLink>
+    label: <NavLink to="/">Trang chủ</NavLink>
   },
   {
     key: "product",
     icon: <ProductOutlined />,
-    label: <NavLink to="/product">Product</NavLink>,
+    label: <NavLink to="/product">Dịch vụ</NavLink>,
   },
   {
     key: "post",
     icon: <ReadOutlined />,
-    label: <NavLink to="/post">Post</NavLink>,
+    label: <NavLink to="/post">Bài viết</NavLink>,
   },
   {
     key: "about",
     icon: <ContactsOutlined />,
-    label: "About",
+    label: "Về chúng tôi",
     children: [
       {
         key: "certificate",
         icon: <TrophyOutlined />,
-        label: <NavLink to="/about/certificate">Certificate</NavLink>,
+        label: <NavLink to="/about/certificate">Chứng chỉ</NavLink>,
       },
       {
         key: "leader",
         icon: <ApartmentOutlined />,
-        label: <NavLink to="/about/leader">Leader</NavLink>,
+        label: <NavLink to="/about/leader">Người đứng đầu</NavLink>,
       },
       {
         key: "mission",
         icon: <AimOutlined />,
-        label: <NavLink to="/about/mission">Mission</NavLink>,
+        label: <NavLink to="/about/mission">Nhiệm vụ</NavLink>,
       },
       {
         key: "vision",
         icon: <BulbOutlined />,
-        label: <NavLink to="/about/vision">Vision</NavLink>,
+        label: <NavLink to="/about/vision">Tầm nhìn</NavLink>,
       },
     ]
   },
-  {
-    key: "profile",
-    icon: <UserOutlined />,
-    label: <NavLink to="/profile">Profile</NavLink>,
-  },
+  // {
+  //   key: "profile",
+  //   icon: <UserOutlined />,
+  //   label: <NavLink to="/profile">Cấu hình</NavLink>,
+  // },
 ]
 
 const App = () => {

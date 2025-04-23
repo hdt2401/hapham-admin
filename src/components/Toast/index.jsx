@@ -9,7 +9,7 @@ export const ToastProvider = ({ children }) => {
   const [api, contextHolder] = notification.useNotification();
   const openToast = (type, description) => {
     api[type]({
-      message: <b>{type ==='success' ? "Success" : "Error"}</b> ,
+      message: <b>{type ==='success' ? "Thành công" : "Thất bại"}</b> ,
       description: description,
     });
   };

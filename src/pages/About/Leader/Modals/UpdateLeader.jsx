@@ -95,7 +95,7 @@ export default function UpdateCertificate({
   return (
     <>
       <Modal
-        title="Update certificate"
+        title="Cập nhật"
         open={isOpen}
         onCancel={handleOpenModal}
         okButtonProps={{
@@ -104,8 +104,8 @@ export default function UpdateCertificate({
           loading: loading,
         }}
         destroyOnClose
-        okText="Submit"
-        cancelText="Cancel"
+        okText="Cập nhật"
+        cancelText="Hủy"
         modalRender={(dom) => (
           <Form
             form={form}
@@ -125,53 +125,53 @@ export default function UpdateCertificate({
         )}
       >
         <Form.Item
-          label="Fullname"
+          label="Họ và tên"
           name="fullName"
           rules={[
             {
               required: true,
-              message: "Title is required!",
+              message: "Họ và tên không được để trống!",
             },
           ]}
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Scholarship" name="scholarship">
+        <Form.Item label="Học vị" name="scholarship">
           <Input />
         </Form.Item>
-        <Form.Item label="position" name="position">
+        <Form.Item label="Vị trí" name="position">
           <Input />
         </Form.Item>
-        <Form.Item name="status" label="Status">
+        <Form.Item label="Trạng thái" name="status">
           <Select
             options={[
               {
                 value: "active",
-                label: "Active",
+                label: "Hoạt động",
               },
               {
                 value: "inactive",
-                label: "Inactive",
+                label: "Khóa",
               },
             ]}
           />
         </Form.Item>
         <Form.Item
-          label="Image"
+          label="Hình ảnh"
           name="image"
           valuePropName="fileList" // Synchronize fileList with form
           getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)} // Ensure proper file handling
           rules={[
             {
               required: true,
-              message: "Please upload an image!",
+              message: "Hình ảnh không được để trống!",
             },
             () => ({
               validator(_, value) {
                 if (file && file.length > 0) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error("You must upload an image!"));
+                return Promise.reject(new Error("Hình ảnh không được để trống!"));
               },
             }),
           ]}
@@ -179,7 +179,7 @@ export default function UpdateCertificate({
           <Upload {...propsUpload} fileList={file}>
             <Button>
               <PlusOutlined />
-              Upload
+              Chọn ảnh
             </Button>
           </Upload>
           {previewImage && (

@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../../firebase/firebaseConfig";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -88,7 +88,7 @@ export default function CertificateDetail({
     } else {
       await onUpdate(dataDetail.id, { ...data, image: url });
     }
-  }
+  };
 
   const handleSubmit = async (data) => {
     if (file?.length > 0 && file[0].originFileObj) {
@@ -121,11 +121,11 @@ export default function CertificateDetail({
       setLoading(false);
     }
   };
-  
+
   return (
     <>
       <Modal
-        title={mode === "CREATE" ? "Create Certificate" : `Update Certificate: ${dataDetail?.title}`}
+        title={mode === "CREATE" ? "Thêm mới" : `Cập nhật ${dataDetail?.title}`}
         open={isOpen}
         onCancel={() => handleCancel(false)}
         okButtonProps={{
@@ -134,8 +134,8 @@ export default function CertificateDetail({
           loading: loading,
         }}
         destroyOnClose
-        okText="Submit"
-        cancelText="Cancel"
+        okText={mode === "CREATE" ? "Thêm mới" : "Cập nhật"}
+        cancelText="Hủy"
         modalRender={(dom) => (
           <Form
             form={form}
@@ -155,46 +155,46 @@ export default function CertificateDetail({
         )}
       >
         <Form.Item
-          label="Title"
+          label="Tên chứng chỉ"
           name="title"
           rules={[
             {
               required: true,
-              message: "Title is required!",
+              message: "Tên chứng chỉ không được để trống!",
             },
           ]}
         >
           <Input />
         </Form.Item>
         <Form.Item
-          label="Date"
+          label="Ngày cấp"
           name="date"
           rules={[
             {
               required: true,
-              message: "Date is required!",
+              message: "Ngày cấp không được để trống!",
             },
           ]}
         >
-          <DatePicker />
+          <DatePicker placeholder="Chọn ngày" />
         </Form.Item>
-        <Form.Item label="Status" name="status">
+        <Form.Item label="Trạng thái" name="status">
           <Select
             options={[
               {
                 value: "active",
-                label: "Active",
+                label: "Hoạt động",
               },
               {
                 value: "inactive",
-                label: "Inactive",
+                label: "Khóa",
               },
             ]}
             defaultValue={"active"}
           />
         </Form.Item>
         <Form.Item
-          label="Image"
+          label="Hình ảnh"
           name="image"
           valuePropName="fileList"
           getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
@@ -202,7 +202,7 @@ export default function CertificateDetail({
           <Upload {...propsUpload} fileList={file}>
             <Button>
               <PlusOutlined />
-              Upload
+              Chọn ảnh
             </Button>
           </Upload>
           {previewImage && (

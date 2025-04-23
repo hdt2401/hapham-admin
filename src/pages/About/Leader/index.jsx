@@ -12,6 +12,7 @@ import {
 import { useLoading } from "../../../components/Loading/index.jsx";
 import { useToast } from "../../../components/Toast/index.jsx";
 import { useTitle } from "../../../components/Title/index.jsx";
+import MainTable from "../../../components/Table/index.jsx";
 
 function LeaderTable() {
   useTitle("Leader");
@@ -52,29 +53,29 @@ function LeaderTable() {
 
   const columns = [
     {
-      title: "Fullname",
+      title: "Họ và tên",
       dataIndex: "fullName",
       key: "fullName",
     },
     {
-      title: "Image",
+      title: "Hình ảnh",
       dataIndex: "image",
       key: "image",
       width: 240,
       render: (src) => <Image src={src} alt="image" width={200} />,
     },
     {
-      title: "Scholarship",
+      title: "Học vị",
       dataIndex: "scholarship",
       key: "scholarship",
     },
     {
-      title: "Position",
+      title: "Vị trí",
       dataIndex: "position",
       key: "position",
     },
     {
-      title: "Status",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
       render: (src) => (
@@ -88,11 +89,11 @@ function LeaderTable() {
       ),
     },
     {
-      title: "Action",
+      title: "Hành động",
       key: "action",
       render: (_, record) => (
         <Space size={"large"}>
-          <Tooltip title="Edit" trigger={["hover"]}>
+          <Tooltip title="Chỉnh sửa" trigger={["hover"]}>
             <EditTwoTone
               style={{ fontSize: "20px" }}
               onClick={() => onOpenUpdateModal(record)}
@@ -196,10 +197,18 @@ function LeaderTable() {
         dataDetail={dataDetail}
       />
       <Button style={{ marginBottom: "2rem" }} onClick={onOpenCreateModal}>
-        Add new leader
+        Thêm mới
       </Button>
       <div className="flex flex-col gap-10">
         <Table dataSource={leaderList} columns={columns} />
+        {/* <MainTable
+          columns={columns}
+          data={leaderList}
+          onEdit={handleUpdateLeader}
+          onDelete={handleDeleteLeader}
+          // params={tableParams}
+          // onTableParamsChange={setTableParams}
+        /> */}
       </div>
     </div>
   );

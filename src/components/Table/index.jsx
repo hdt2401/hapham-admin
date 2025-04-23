@@ -38,24 +38,24 @@ function MainTable({
       ),
     },
     {
-      title: "Action",
+      title: "Hành động",
       key: "action",
       align: "center",
-      width: 100,
+      width: 200,
       render: (_, record) => (
         <Space size={"large"}>
-          <Tooltip title="Edit" trigger={["hover"]}>
+          <Tooltip title="Chỉnh sửa" trigger={["hover"]}>
             <EditTwoTone
               style={{ fontSize: "20px" }}
               onClick={() => onEdit(record)}
             />
           </Tooltip>
-          <Tooltip title="Delete" trigger={["hover"]}>
+          <Tooltip title="Xóa" trigger={["hover"]}>
             <Popconfirm
-              title={`Do you want to delete post ${record.title}?`}
+              title={`Bạn có muốn xóa ${record.title}?`}
               onConfirm={() => onDelete(record.id)}
-              okText="Delete"
-              cancelText="Cancel"
+              okText="Xóa"
+              cancelText="Hủy"
             >
               <DeleteTwoTone
                 style={{ fontSize: "20px" }}

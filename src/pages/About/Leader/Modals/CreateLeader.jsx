@@ -80,7 +80,7 @@ export default function CreateCertificate({
   return (
     <>
       <Modal
-        title="Create certificate"
+        title="Thêm mới"
         open={isOpen}
         onCancel={handleOpenModal}
         okButtonProps={{

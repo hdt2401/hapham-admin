@@ -26,7 +26,7 @@ export default function Post() {
 
   const columns = [
     {
-      title: "Title",
+      title: "Tiêu đề",
       dataIndex: "title",
       key: "title",
     }
@@ -122,7 +122,7 @@ export default function Post() {
             style={{ marginBottom: "2rem" }}
             onClick={() => setMode(MODE.create)}
           >
-            Add new post
+            Thêm mới
           </Button>
           <MainTable
             data={dataFetching}
@@ -139,7 +139,7 @@ export default function Post() {
             style={{ marginBottom: "2rem" }}
             onClick={() => setMode(MODE.list)}
           >
-            Back
+            Quay lại
           </Button>
           <PostDetail
             postMode={mode}
