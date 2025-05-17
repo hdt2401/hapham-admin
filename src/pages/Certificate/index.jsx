@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import CertificateService from "../../../services/certificate.ts";
+import CertificateService from "../../services/certificate.ts";
 import CertificateDetail from "./Modals/CertificateDetail.jsx";
 import { Button, Table, Image, Tag, Popconfirm, Tooltip, Space } from "antd";
 import {
@@ -8,15 +8,15 @@ import {
   // LockTwoTone,
   // UnlockTwoTone,
 } from "@ant-design/icons";
-import { useLoading } from "../../../components/Loading";
-import { useToast } from "../../../components/Toast";
-import { useTitle } from "../../../components/Title/index.jsx";
-import MainTable from "../../../components/Table/index.jsx";
+import { useLoading } from "../../components/Loading/index.jsx";
+import { useToast } from "../../components/Toast/index.jsx";
+import { useTitle } from "../../components/Title/index.jsx";
+import MainTable from "../../components/Table/index.jsx";
 import { PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 function Certificate() {
-  useTitle("Certificate");
+  useTitle("Chứng chỉ");
   const [openModal, setOpenModal] = useState(false);
   const { startLoading, stopLoading } = useLoading();
   const { openToast } = useToast();

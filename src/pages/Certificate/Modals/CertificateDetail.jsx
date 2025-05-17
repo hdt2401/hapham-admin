@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "../../../../firebase/firebaseConfig";
+import { storage } from "../../../firebase/firebaseConfig";
 import dayjs from "dayjs";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {

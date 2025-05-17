@@ -1,8 +1,8 @@
 import React from 'react'
-import { useTitle } from '../../../components/Title'
+import { useTitle } from '../../components/Title'
 
 export default function Vision() {
-  useTitle("Vision");
+  useTitle("Tầm nhìn");
   return (
     <div>Vision</div>
   )

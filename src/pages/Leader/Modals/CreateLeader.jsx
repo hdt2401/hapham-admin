@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "../../../../firebase/firebaseConfig";
+import { storage } from "../../../firebase/firebaseConfig";
 import { Button, Form, Image, Input, Modal, Upload } from "antd";
 import {
   PlusOutlined, 

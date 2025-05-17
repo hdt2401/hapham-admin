@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import LeaderService from "../../../services/leader.ts";
+import LeaderService from "../../services/leader.ts";
 import CreateLeader from "./Modals/CreateLeader.jsx";
 import UpdateLeader from "./Modals/UpdateLeader.jsx";
 import { Button, Table, Image, Tag, Popconfirm, Tooltip, Space } from "antd";
@@ -9,13 +9,13 @@ import {
   // LockTwoTone,
   // UnlockTwoTone,
 } from "@ant-design/icons";
-import { useLoading } from "../../../components/Loading/index.jsx";
-import { useToast } from "../../../components/Toast/index.jsx";
-import { useTitle } from "../../../components/Title/index.jsx";
-import MainTable from "../../../components/Table/index.jsx";
+import { useLoading } from "../../components/Loading/index.jsx";
+import { useToast } from "../../components/Toast/index.jsx";
+import { useTitle } from "../../components/Title/index.jsx";
+import MainTable from "../../components/Table/index.jsx";
 
 function LeaderTable() {
-  useTitle("Leader");
+  useTitle("Người đứng đầu");
   const [leaderList, setLeaderList] = useState([]);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);

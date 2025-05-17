@@ -19,13 +19,12 @@ import { Routes, Route, NavLink, Link, useLocation } from "react-router";
 import Product from "./pages/Product";
 import ProductDetail from "./pages/Product/components/ProductDetail";
 import Post from "./pages/Post";
-import About from "./pages/About";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
-import Certificate from "./pages/About/Certificate";
-import Leader from "./pages/About/Leader";
-import Mission from "./pages/About/Mission";
-import Vision from "./pages/About/Vision";
+import Certificate from "./pages/Certificate";
+import Leader from "./pages/Leader";
+import Mission from "./pages/Mission";
+import Vision from "./pages/Vision";
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -34,8 +33,7 @@ const mainMenu = [
   {
     key: "",
     icon: <HomeOutlined />,
-    // label: "Home",
-    label: <NavLink to="/">Trang chủ</NavLink>
+    label: <NavLink to="/">Trang chủ</NavLink>,
   },
   {
     key: "product",
@@ -48,38 +46,26 @@ const mainMenu = [
     label: <NavLink to="/post">Bài viết</NavLink>,
   },
   {
-    key: "about",
-    icon: <ContactsOutlined />,
-    label: "Về chúng tôi",
-    children: [
-      {
-        key: "certificate",
-        icon: <TrophyOutlined />,
-        label: <NavLink to="/about/certificate">Chứng chỉ</NavLink>,
-      },
-      {
-        key: "leader",
-        icon: <ApartmentOutlined />,
-        label: <NavLink to="/about/leader">Người đứng đầu</NavLink>,
-      },
-      {
-        key: "mission",
-        icon: <AimOutlined />,
-        label: <NavLink to="/about/mission">Nhiệm vụ</NavLink>,
-      },
-      {
-        key: "vision",
-        icon: <BulbOutlined />,
-        label: <NavLink to="/about/vision">Tầm nhìn</NavLink>,
-      },
-    ]
+    key: "certificate",
+    icon: <TrophyOutlined />,
+    label: <NavLink to="/certificate">Chứng chỉ</NavLink>,
   },
-  // {
-  //   key: "profile",
-  //   icon: <UserOutlined />,
-  //   label: <NavLink to="/profile">Cấu hình</NavLink>,
-  // },
-]
+  {
+    key: "leader",
+    icon: <ApartmentOutlined />,
+    label: <NavLink to="/leader">Người đứng đầu</NavLink>,
+  },
+  {
+    key: "mission",
+    icon: <AimOutlined />,
+    label: <NavLink to="/mission">Nhiệm vụ</NavLink>,
+  },
+  {
+    key: "vision",
+    icon: <BulbOutlined />,
+    label: <NavLink to="/vision">Tầm nhìn</NavLink>,
+  },
+];
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -124,7 +110,7 @@ const App = () => {
           justifyContent: "space-between",
           padding: "0 16px",
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-          zIndex: "999"
+          zIndex: "999",
         }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -140,7 +126,7 @@ const App = () => {
         </div>
         {isLoggedIn ? (
           <Dropdown
-            menu={{items,}}
+            menu={{ items }}
             trigger={["click"]}
             placement="bottomRight"
             arrow
@@ -263,19 +249,20 @@ const App = () => {
             }}
           >
             <Routes>
-              <Route path="" index element={<Home />} title="Home"/>
+              <Route path="" index element={<Home />} title="Home" />
               <Route path="/product">
                 <Route index element={<Product />} />
                 <Route path=":id" element={<ProductDetail mode="UPDATE" />} />
-                <Route path="create" element={<ProductDetail mode="CREATE" />} />
+                <Route
+                  path="create"
+                  element={<ProductDetail mode="CREATE" />}
+                />
               </Route>
               <Route path="/post" element={<Post />} />
-              <Route path="about" element={<About />}>
-                <Route path="certificate" element={<Certificate />} />
-                <Route path="leader" element={<Leader />} />
-                <Route path="mission" element={<Mission />} />
-                <Route path="vision" element={<Vision />} />
-              </Route>
+              <Route path="certificate" element={<Certificate />} />
+              <Route path="leader" element={<Leader />} />
+              <Route path="mission" element={<Mission />} />
+              <Route path="vision" element={<Vision />} />
               <Route path="/profile" element={<Profile />} />
             </Routes>
           </Content>

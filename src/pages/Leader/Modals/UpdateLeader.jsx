@@ -1,7 +1,7 @@
 import { Button, Form, Image, Input, Modal, Select, Upload } from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import { storage } from "../../../../firebase/firebaseConfig";
+import { storage } from "../../../firebase/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const getBase64 = (file) =>
