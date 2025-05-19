@@ -94,9 +94,13 @@ function MainTable({
           columns={columnsTable}
           loading={data ? false : true}
           pagination={{
-            defaultCurrent: pagination?.page,
-            showQuickJumper: true,
+            total: data?.total,
+            showTotal: (result) => `Tổng số ${result}`,
+            locale: {
+              items_per_page: "/ trang",
+            },
             showSizeChanger: true,
+            defaultCurrent: pagination?.page,
             onChange: (page, pageSize) => {
               onTableParamsChange({
                 pagination: {
@@ -113,8 +117,6 @@ function MainTable({
                 },
               });
             },
-            total: data?.total,
-            showTotal: (result) => `Total ${result} items`,
           }}
           scroll={{
             x: "max-content",
