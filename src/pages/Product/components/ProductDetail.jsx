@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebase/firebaseConfig.js";
-import { Button, Form, Image, Input, Select, Upload } from "antd";
+import {
+  Button,
+  Col,
+  Flex,
+  Form,
+  Image,
+  Input,
+  Row,
+  Select,
+  Upload,
+} from "antd";
 import {
   PlusOutlined,
   // InboxOutlined,
@@ -144,7 +154,10 @@ export default function ProductDetail({ mode }) {
 
       if (file.length > 0 && file[0].originFileObj) {
         const storageRef = ref(storage, `images/${file[0].originFileObj.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, file[0].originFileObj);
+        const uploadTask = uploadBytesResumable(
+          storageRef,
+          file[0].originFileObj
+        );
 
         uploadTask.on(
           "state_changed",
@@ -193,116 +206,133 @@ export default function ProductDetail({ mode }) {
 
   return (
     <div>
-      <Button style={{ marginBottom: "2rem" }} onClick={() => navigate(-1)}>
-        Quay lại
-      </Button>
+      <Flex align="center" justify="space-between" style={{ marginBottom: "2rem" }} >
+        <Button onClick={() => navigate(-1)}>
+          Quay lại
+        </Button>
+        <Button onClick={handleSubmit} type="primary">
+          {mode == "CREATE" ? "Thêm mới" : "Cập nhật"}
+        </Button>
+      </Flex>
       <Form
         form={form}
         name="ProductDetailForm"
         onFinish={handleSubmit}
         clearOnDestroy
         initialValues={mode === "CREATE" ? defaultValue : form.getFieldsValue()}
-        labelCol={{
-          span: 4,
-        }}
-        wrapperCol={{
-          span: 20,
-        }}
+        layout="vertical"
+        size="large"
       >
-        <Form.Item
-          label="Tên (VI)"
-          name={["name", "vi"]}
-          rules={[
-            {
-              required: true,
-              message: "Nhập tên dịch vụ!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item label="Tên (EN)" name={["name", "en"]}>
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Mô tả (VI)"
-          name={["description", "vi"]}
-          rules={[
-            {
-              required: true,
-              message: "Nhập mô tả dịch vụ!",
-            },
-          ]}
-        >
-          <TextArea />
-        </Form.Item>
-        <Form.Item label="Mô tả (EN)" name={["description", "en"]}>
-          <TextArea />
-        </Form.Item>
-        <Form.Item label="Trạng thái" name="status">
-          <Select
-            defaultValue="active"
-            options={[
-              {
-                value: "active",
-                label: "Hoạt động",
-              },
-              {
-                value: "inactive",
-                label: "Khóa",
-              },
-            ]}
-          />
-        </Form.Item>
-        <Form.Item label="Từ khoá" name="keyword">
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Hình ảnh"
-          name="image"
-          rules={[
-            () => ({
-              validator(_, value) {
-                if (file && file.length > 0) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error("You must upload an image!"));
-              },
-            }),
-          ]}
-        >
-          <Upload
-            maxCount={1}
-            listType="picture"
-            accept="image/*"
-            fileList={file}
-            onPreview={propsUpload.onPreview}
-            onChange={propsUpload.onChange}
-            beforeUpload={propsUpload.beforeUpload}
-          >
-            <Button>
-              <PlusOutlined />
-              Chọn ảnh
-            </Button>
-          </Upload>
-          {previewImage && (
-            <Image
-              wrapperStyle={{
-                display: "none",
-              }}
-              preview={{
-                visible: previewOpen,
-                onVisibleChange: (visible) => setPreviewOpen(visible),
-                afterOpenChange: (visible) => !visible && setPreviewImage(""),
-              }}
-              src={previewImage}
-            />
-          )}
-        </Form.Item>
+        <Row gutter={16}>
+          <Col xs={24} md={12}>
+            <Form.Item
+              label="Tên dịch vụ (VI)"
+              name={["name", "vi"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Nhập tên dịch vụ!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={12}>
+            <Form.Item label="Tên dịch vụ (EN)" name={["name", "en"]}>
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={12}>
+            <Form.Item
+              label="Mô tả dịch vụ (VI)"
+              name={["description", "vi"]}
+              rules={[
+                {
+                  required: true,
+                  message: "Nhập mô tả dịch vụ!",
+                },
+              ]}
+            >
+              <TextArea />
+            </Form.Item>
+          </Col>
+          <Col xs={24} md={12}>
+            <Form.Item label="Mô tả dịch vụ (EN)" name={["description", "en"]}>
+              <TextArea />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={8} md={12}>
+            <Form.Item label="Từ khoá" name="keyword">
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={8} md={6}>
+            <Form.Item label="Trạng thái" name="status">
+              <Select
+                defaultValue="active"
+                options={[
+                  {
+                    value: "active",
+                    label: "Hoạt động",
+                  },
+                  {
+                    value: "inactive",
+                    label: "Khóa",
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={8} md={6}>
+            <Form.Item
+              label="Hình ảnh"
+              name="image"
+              rules={[
+                () => ({
+                  validator(_, value) {
+                    if (file && file.length > 0) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("You must upload an image!")
+                    );
+                  },
+                }),
+              ]}
+            >
+              <Upload
+                maxCount={1}
+                listType="picture"
+                accept="image/*"
+                fileList={file}
+                onPreview={propsUpload.onPreview}
+                onChange={propsUpload.onChange}
+                beforeUpload={propsUpload.beforeUpload}
+              >
+                <Button>
+                  <PlusOutlined />
+                  Chọn ảnh
+                </Button>
+              </Upload>
+              {previewImage && (
+                <Image
+                  wrapperStyle={{
+                    display: "none",
+                  }}
+                  preview={{
+                    visible: previewOpen,
+                    onVisibleChange: (visible) => setPreviewOpen(visible),
+                    afterOpenChange: (visible) =>
+                      !visible && setPreviewImage(""),
+                  }}
+                  src={previewImage}
+                />
+              )}
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
-      <Button onClick={handleSubmit} type="primary">
-        {mode == "CREATE" ? "Thêm mới" : "Cập nhật"}
-      </Button>
     </div>
   );
 }
