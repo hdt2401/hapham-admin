@@ -4,13 +4,14 @@ import { useLoading } from "../../components/Loading/index.jsx";
 import { useToast } from "../../components/Toast/index.jsx";
 import PostService from "../../services/post.ts";
 import { useTitle } from "../../components/Title/index.jsx";
-import "./styles.scss";
-import PostDetail from "./components/PostDetail/index.jsx";
+import PostDetail from "./components/PostDetail.jsx";
 import { MODE } from "../../utils/constant.js";
 import MainTable from "../../components/Table/index.jsx";
+import { useNavigate } from "react-router";
 
 export default function Post() {
-  useTitle("Post");
+  useTitle("Bài viết");
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { startLoading, stopLoading } = useLoading();
   const { openToast } = useToast();
@@ -128,7 +129,8 @@ export default function Post() {
             data={dataFetching}
             columns={columns}
             params={tableParams}
-            onEdit={navigateToDetail}
+            // onEdit={navigateToDetail}
+            onEdit={(record) => navigate("/post/" + record.id)}
             onDelete={handleDelete}
             onTableParamsChange={setTableParams}
           />

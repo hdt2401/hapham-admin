@@ -25,6 +25,7 @@ import Certificate from "./pages/Certificate";
 import Leader from "./pages/Leader";
 import Mission from "./pages/Mission";
 import Vision from "./pages/Vision";
+import PostDetail from "./pages/Post/components/PostDetail";
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -258,7 +259,14 @@ const App = () => {
                   element={<ProductDetail mode="CREATE" />}
                 />
               </Route>
-              <Route path="/post" element={<Post />} />
+              <Route path="/post">
+                <Route index element={<Post />} />
+                <Route path=":id" element={<PostDetail mode="UPDATE" />} />
+                <Route
+                  path="create"
+                  element={<PostDetail mode="CREATE" />}
+                />
+              </Route>
               <Route path="certificate" element={<Certificate />} />
               <Route path="leader" element={<Leader />} />
               <Route path="mission" element={<Mission />} />
